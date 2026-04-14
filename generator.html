@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Storyboard URL Generator</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif;
+    background: #0a0a0a;
+    color: #e8e8e8;
+    padding: 0 0 40px 0;
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+    min-height: 100vh;
+  }
+  .header {
+    background: #1a1a2e;
+    padding: 14px 16px;
+    border-bottom: 1px solid #333;
+  }
+  .header h1 {
+    font-size: 13px;
+    color: #888;
+    font-weight: normal;
+  }
+  .header .title {
+    font-size: 17px;
+    font-weight: bold;
+    color: #fff;
+    margin-top: 2px;
+  }
+  .header .sub {
+    font-size: 11px;
+    color: #666;
+    margin-top: 4px;
+  }
+
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 20px 16px;
+  }
+
+  .section {
+    background: #151515;
+    border: 1px solid #222;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 10px;
+    letter-spacing: 0.05em;
+  }
+
+  .textarea {
+    width: 100%;
+    min-height: 260px;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    background: #0a0a0a;
+    color: #ddd;
+    font-family: 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    resize: vertical;
+    box-sizing: border-box;
+  }
+  .textarea:focus {
+    outline: none;
+    border-color: #4a6cf7;
+  }
+  .textarea.dragover {
+    border-color: #4a6cf7;
+    background: rgba(74, 108, 247, 0.08);
+  }
+
+  .input-head {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .input-head .file-label {
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    background: #0a0a0a;
+    color: #ccc;
+    font-size: 12px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  .input-head .file-label:active { background: #1a1a2e; }
+  .input-head .file-input { display: none; }
+  .input-head .dd-hint {
+    font-size: 11px;
+    color: #555;
+  }
+
+  .meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+    font-size: 11px;
+    color: #666;
+  }
+  .meta-row .err { color: #e74c3c; }
+  .meta-row .ok { color: #2ecc71; }
+
+  .btn {
+    display: inline-block;
+    padding: 13px 18px;
+    border-radius: 10px;
+    border: none;
+    background: #4a6cf7;
+    color: #fff;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+    transition: opacity 0.2s;
+  }
+  .btn:active { opacity: 0.75; }
+  .btn:disabled {
+    background: #222;
+    color: #555;
+    cursor: not-allowed;
+  }
+  .btn.secondary {
+    background: #222;
+    color: #ccc;
+    border: 1px solid #333;
+  }
+
+  .output-box {
+    padding: 12px;
+    border-radius: 8px;
+    background: #0a0a0a;
+    border: 1px solid #333;
+    word-break: break-all;
+    font-family: 'SF Mono', Menlo, monospace;
+    font-size: 11px;
+    color: #ccc;
+    line-height: 1.5;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  .url-stats {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    font-size: 11px;
+  }
+  .url-stats .stat { color: #666; }
+  .url-stats .stat strong { color: #ddd; font-weight: bold; }
+  .url-stats .line-ok { color: #2ecc71; }
+  .url-stats .line-warn { color: #f39c12; }
+  .url-stats .line-bad { color: #e74c3c; }
+  .url-stats .qr-ok { color: #2ecc71; }
+  .url-stats .qr-bad { color: #666; }
+
+  .action-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .action-row .btn { flex: 1; font-size: 13px; padding: 11px; }
+
+  .qr-box {
+    text-align: center;
+    padding: 16px;
+    background: #fff;
+    border-radius: 8px;
+    margin-top: 12px;
+  }
+  .qr-box canvas, .qr-box img {
+    display: block;
+    margin: 0 auto;
+  }
+  .qr-note {
+    font-size: 11px;
+    color: #666;
+    text-align: center;
+    margin-top: 8px;
+  }
+  .qr-empty {
+    padding: 20px;
+    text-align: center;
+    font-size: 12px;
+    color: #666;
+    border: 1px dashed #222;
+    border-radius: 8px;
+    margin-top: 12px;
+  }
+
+  .hidden { display: none !important; }
+
+  .toast {
+    position: fixed;
+    left: 50%;
+    bottom: 30px;
+    transform: translateX(-50%) translateY(20px);
+    background: #2ecc71;
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 24px;
+    font-size: 13px;
+    font-weight: bold;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s;
+    z-index: 400;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  .toast.error { background: #e74c3c; }
+
+  .footer-note {
+    margin-top: 24px;
+    padding: 12px 16px;
+    font-size: 11px;
+    color: #555;
+    line-height: 1.6;
+    text-align: center;
+  }
+  .footer-note a { color: #4a6cf7; text-decoration: none; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Storyboard</h1>
+  <div class="title">URL Generator</div>
+  <div class="sub">構成JSON → 撮影者に渡せるURLを生成</div>
+</div>
+
+<div class="container">
+
+  <div class="section">
+    <div class="section-title">1. 構成JSONを入力</div>
+    <div class="input-head">
+      <label class="file-label">
+        ファイルを選択
+        <input type="file" class="file-input" id="fileInput" accept=".json,application/json">
+      </label>
+      <span class="dd-hint">または下のエリアにファイルをドラッグ&ドロップ / JSONを貼り付け</span>
+    </div>
+    <textarea class="textarea" id="jsonInput" placeholder='{"meta": {...}, "compositions": [...]}'></textarea>
+    <div class="meta-row">
+      <span id="jsonStatus" class="ok">JSONを貼り付けると自動で解析します</span>
+      <span id="jsonCount"></span>
+    </div>
+    <div style="margin-top: 12px">
+      <button class="btn" id="generateBtn" disabled>URLを生成</button>
+    </div>
+  </div>
+
+  <div class="section hidden" id="outputSection">
+    <div class="section-title">2. 生成されたURL</div>
+    <div class="output-box" id="urlOutput"></div>
+    <div class="url-stats" id="urlStats"></div>
+    <div class="action-row">
+      <button class="btn" id="copyBtn">URLをコピー</button>
+      <button class="btn secondary hidden" id="shareBtn">共有</button>
+    </div>
+  </div>
+
+  <div class="section hidden" id="qrSection">
+    <div class="section-title">3. QRコード</div>
+    <div id="qrContainer"></div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="footer-note">
+  メインアプリ: <a href="./">Storyboard</a><br>
+  このページは管理用です。データはブラウザ内だけで処理され、どこにも送信されません。
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+<script>
+// ===== 設定 =====
+const APP_URL = window.location.origin + window.location.pathname.replace(/generator\.html.*$/, '');
+
+// ===== 圧縮ヘルパー（メインアプリと同じ方式） =====
+async function compressToUrlParam(str) {
+  try {
+    const bytes = new TextEncoder().encode(str);
+    const stream = new Blob([bytes]).stream().pipeThrough(new CompressionStream('deflate-raw'));
+    const compressed = new Uint8Array(await new Response(stream).arrayBuffer());
+    let bin = '';
+    for (let i = 0; i < compressed.length; i++) bin += String.fromCharCode(compressed[i]);
+    return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  } catch(e) {
+    return 'raw:' + btoa(unescape(encodeURIComponent(str))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+}
+
+// ===== JSON入力バリデーション =====
+const jsonInput = document.getElementById('jsonInput');
+const jsonStatus = document.getElementById('jsonStatus');
+const jsonCount = document.getElementById('jsonCount');
+const generateBtn = document.getElementById('generateBtn');
+let parsedData = null;
+
+function validateJson() {
+  const txt = jsonInput.value.trim();
+  if (!txt) {
+    jsonStatus.textContent = 'JSONを貼り付けると自動で解析します';
+    jsonStatus.className = 'ok';
+    jsonCount.textContent = '';
+    generateBtn.disabled = true;
+    parsedData = null;
+    return;
+  }
+  try {
+    const obj = JSON.parse(txt);
+    if (!obj.meta || !Array.isArray(obj.compositions)) {
+      throw new Error('meta / compositions が見つかりません');
+    }
+    const storeCount = obj.compositions.length;
+    const cutCount = obj.compositions.reduce((s, c) => s + (c.cuts ? c.cuts.length : 0), 0);
+    jsonStatus.textContent = '解析OK：' + (obj.meta.mall || '?') + ' / ' + (obj.meta.title || '?');
+    jsonStatus.className = 'ok';
+    jsonCount.textContent = storeCount + '店舗 / ' + cutCount + 'カット';
+    generateBtn.disabled = false;
+    parsedData = obj;
+  } catch(e) {
+    jsonStatus.textContent = 'エラー：' + e.message;
+    jsonStatus.className = 'err';
+    jsonCount.textContent = '';
+    generateBtn.disabled = true;
+    parsedData = null;
+  }
+}
+jsonInput.addEventListener('input', validateJson);
+
+// ===== ファイル読み込み（ボタン + D&D） =====
+function readJsonFile(file) {
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) {
+    showToast('ファイルが大きすぎます（5MB上限）', true);
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = e => {
+    jsonInput.value = e.target.result;
+    validateJson();
+    if (parsedData) {
+      showToast('ファイルを読み込みました');
+    }
+  };
+  reader.onerror = () => showToast('ファイル読み込みエラー', true);
+  reader.readAsText(file);
+}
+
+document.getElementById('fileInput').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (file) readJsonFile(file);
+  e.target.value = ''; // 同じファイルを再選択できるように
+});
+
+// textarea自体をドロップターゲットに
+['dragenter', 'dragover'].forEach(evt => {
+  jsonInput.addEventListener(evt, e => {
+    if (e.dataTransfer && e.dataTransfer.types && e.dataTransfer.types.includes('Files')) {
+      e.preventDefault();
+      e.stopPropagation();
+      jsonInput.classList.add('dragover');
+    }
+  });
+});
+['dragleave', 'drop'].forEach(evt => {
+  jsonInput.addEventListener(evt, e => {
+    jsonInput.classList.remove('dragover');
+  });
+});
+jsonInput.addEventListener('drop', e => {
+  if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+    e.preventDefault();
+    e.stopPropagation();
+    readJsonFile(e.dataTransfer.files[0]);
+  }
+});
+
+// ページ全体でのデフォルトドロップ挙動（ファイルがブラウザで開かれてしまうのを防ぐ）
+['dragover', 'drop'].forEach(evt => {
+  window.addEventListener(evt, e => {
+    if (e.target === jsonInput) return;
+    if (e.dataTransfer && e.dataTransfer.types && e.dataTransfer.types.includes('Files')) {
+      e.preventDefault();
+    }
+  });
+});
+
+// ===== URL生成 =====
+const outputSection = document.getElementById('outputSection');
+const qrSection = document.getElementById('qrSection');
+const urlOutput = document.getElementById('urlOutput');
+const urlStats = document.getElementById('urlStats');
+const copyBtn = document.getElementById('copyBtn');
+const shareBtn = document.getElementById('shareBtn');
+const qrContainer = document.getElementById('qrContainer');
+
+let generatedUrl = '';
+
+generateBtn.addEventListener('click', async () => {
+  if (!parsedData) return;
+  generateBtn.disabled = true;
+  generateBtn.textContent = '生成中...';
+  try {
+    const json = JSON.stringify(parsedData);
+    const compressed = await compressToUrlParam(json);
+    generatedUrl = APP_URL + '#data=' + compressed;
+    showOutput();
+  } catch(e) {
+    showToast('URL生成エラー: ' + e.message, true);
+  } finally {
+    generateBtn.disabled = false;
+    generateBtn.textContent = 'URLを生成';
+  }
+});
+
+function showOutput() {
+  outputSection.classList.remove('hidden');
+  urlOutput.textContent = generatedUrl;
+  // 統計
+  const len = generatedUrl.length;
+  let lineLabel, lineClass;
+  if (len <= 3000) { lineLabel = 'LINEタップ：◎ 快適'; lineClass = 'line-ok'; }
+  else if (len <= 5000) { lineLabel = 'LINEタップ：○ OK'; lineClass = 'line-ok'; }
+  else if (len <= 8000) { lineLabel = 'LINEタップ：△ 不安定な可能性'; lineClass = 'line-warn'; }
+  else { lineLabel = 'LINEタップ：× 長すぎ（貼り付け経由推奨）'; lineClass = 'line-bad'; }
+
+  let qrLabel, qrClass, canQr;
+  if (len <= 2500) { qrLabel = 'QR：◎ 読取可'; qrClass = 'qr-ok'; canQr = true; }
+  else if (len <= 2900) { qrLabel = 'QR：△ 生成は可能だが読取難あり'; qrClass = 'qr-bad'; canQr = true; }
+  else { qrLabel = 'QR：× URLが長すぎてQR化不可'; qrClass = 'qr-bad'; canQr = false; }
+
+  urlStats.innerHTML = '<span class="stat"><strong>' + len.toLocaleString() + '</strong>字</span>'
+    + '<span class="stat ' + lineClass + '">' + lineLabel + '</span>'
+    + '<span class="stat ' + qrClass + '">' + qrLabel + '</span>';
+
+  // 共有ボタン（Web Share APIがある場合のみ）
+  if (navigator.share) shareBtn.classList.remove('hidden');
+  else shareBtn.classList.add('hidden');
+
+  // QRコード
+  qrSection.classList.remove('hidden');
+  renderQr(canQr);
+
+  outputSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function renderQr(canQr) {
+  qrContainer.innerHTML = '';
+  if (!canQr) {
+    qrContainer.innerHTML = '<div class="qr-empty">URLが長すぎるためQR生成できません<br>LINE送信・URLコピーで受け渡してください</div>';
+    return;
+  }
+  try {
+    // qrcode-generator ライブラリを使用
+    // type=0 は自動最適選択、error correctionはLにしてデータ容量を最大化
+    const qr = qrcode(0, 'L');
+    qr.addData(generatedUrl, 'Byte');
+    qr.make();
+    const svgHtml = qr.createSvgTag({ cellSize: 4, margin: 4, scalable: true });
+    qrContainer.innerHTML = '<div class="qr-box">' + svgHtml + '</div>'
+      + '<div class="qr-note">撮影者のスマホカメラで読み取ると構成が開きます</div>';
+    const svg = qrContainer.querySelector('svg');
+    if (svg) {
+      svg.style.width = '240px';
+      svg.style.height = '240px';
+      svg.style.maxWidth = '100%';
+    }
+  } catch(e) {
+    qrContainer.innerHTML = '<div class="qr-empty">QR生成エラー：' + e.message + '</div>';
+  }
+}
+
+// ===== コピー =====
+copyBtn.addEventListener('click', async () => {
+  if (!generatedUrl) return;
+  try {
+    await navigator.clipboard.writeText(generatedUrl);
+    showToast('URLをコピーしました');
+  } catch(e) {
+    // フォールバック：選択してコピー指示
+    const range = document.createRange();
+    range.selectNodeContents(urlOutput);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+    try {
+      document.execCommand('copy');
+      showToast('URLをコピーしました');
+    } catch(err) {
+      showToast('コピー失敗：URLを長押しで選択してください', true);
+    }
+  }
+});
+
+// ===== 共有（Web Share API） =====
+shareBtn.addEventListener('click', async () => {
+  if (!generatedUrl) return;
+  const title = (parsedData && parsedData.meta && parsedData.meta.mall) || '構成';
+  try {
+    await navigator.share({
+      title: 'Storyboard: ' + title,
+      text: title + ' の撮影構成',
+      url: generatedUrl
+    });
+  } catch(e) {
+    if (e.name !== 'AbortError') showToast('共有エラー: ' + e.message, true);
+  }
+});
+
+// ===== トースト =====
+let toastTimer = null;
+function showToast(msg, isError) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.toggle('error', !!isError);
+  t.classList.add('show');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>
+
+</body>
+</html>
