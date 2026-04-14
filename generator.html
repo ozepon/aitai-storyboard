@@ -296,6 +296,7 @@
 <script>
 // ===== 設定 =====
 const APP_URL = window.location.origin + window.location.pathname.replace(/generator\.html.*$/, '');
+const SHORTENER_API = 'https://storyboard-shortener.gguide.workers.dev/api/create';
 
 // ===== 圧縮ヘルパー（メインアプリと同じ方式） =====
 async function compressToUrlParam(str) {
@@ -419,14 +420,61 @@ const qrContainer = document.getElementById('qrContainer');
 
 let generatedUrl = '';
 
+function getOrPromptToken() {
+  let token = localStorage.getItem('shortener_token');
+  if (!token) {
+    token = prompt('管理用トークン（ADMIN_TOKEN）を入力してください。\nこのブラウザに保存されます（次回以降は不要）。');
+    if (token) {
+      token = token.trim();
+      if (token) localStorage.setItem('shortener_token', token);
+      else token = null;
+    }
+  }
+  return token || null;
+}
+
 generateBtn.addEventListener('click', async () => {
   if (!parsedData) return;
+
+  // トークン取得（初回のみ入力、以降はlocalStorageから）
+  const token = getOrPromptToken();
+  if (!token) {
+    showToast('トークンが入力されませんでした', true);
+    return;
+  }
+
   generateBtn.disabled = true;
   generateBtn.textContent = '生成中...';
   try {
+    // 1) JSONを圧縮して長いURLを組み立てる
     const json = JSON.stringify(parsedData);
     const compressed = await compressToUrlParam(json);
-    generatedUrl = APP_URL + '#data=' + compressed;
+    const longUrl = APP_URL + '#data=' + compressed;
+
+    // 2) Workerに投げて短縮URLを取得
+    const res = await fetch(SHORTENER_API, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Auth-Token': token,
+      },
+      body: JSON.stringify({ url: longUrl }),
+    });
+
+    if (res.status === 401) {
+      localStorage.removeItem('shortener_token');
+      showToast('トークンが不正です。もう一度「URLを生成」を押して入力してください。', true);
+      return;
+    }
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error('HTTP ' + res.status + ' ' + errText);
+    }
+    const data = await res.json();
+    if (!data.shortUrl) throw new Error('shortUrl が返りませんでした');
+
+    // 3) 短縮URLを出力として表示
+    generatedUrl = data.shortUrl;
     showOutput();
   } catch(e) {
     showToast('URL生成エラー: ' + e.message, true);
