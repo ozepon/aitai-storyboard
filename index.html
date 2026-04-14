@@ -45,6 +45,23 @@
     flex-shrink: 0;
   }
   .header .about-btn:active { background: #222; }
+  .header-actions {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .header .hdr-btn {
+    padding: 4px 10px;
+    border-radius: 14px;
+    border: 1px solid #444;
+    background: none;
+    color: #ccc;
+    font-size: 11px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .header .hdr-btn:active { background: #222; }
   .header .mall { font-size: 17px; font-weight: bold; color: #fff; margin-top: 2px; }
   .header .shooting-date {
     font-size: 12px;
@@ -415,11 +432,53 @@
   .caption-copy.copied { background: #2ecc71; }
 
   /* ===== ファイル選択 ===== */
+  /* ===== ホーム画面 ===== */
+  .home-hero {
+    padding: 28px 20px 16px;
+    text-align: center;
+  }
+  .home-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #fff;
+  }
+  .home-sub {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #888;
+    line-height: 1.5;
+  }
+  .home-actions {
+    padding: 4px 16px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .home-action-btn {
+    display: block;
+    width: 100%;
+    padding: 14px 18px;
+    border-radius: 12px;
+    border: none;
+    background: #4a6cf7;
+    color: #fff;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  .home-action-btn.secondary {
+    background: #222;
+    color: #ccc;
+    border: 1px solid #333;
+  }
+  .home-action-btn:active { opacity: 0.8; }
   .drop-zone {
-    border: 2px dashed #333;
-    border-radius: 16px;
-    padding: 40px 20px;
-    margin: 20px 16px;
+    border: 1px dashed #2a2a2a;
+    border-radius: 12px;
+    padding: 14px 20px;
+    margin: 14px 16px 0;
     text-align: center;
     transition: all 0.3s;
   }
@@ -427,22 +486,113 @@
     border-color: #4a6cf7;
     background: rgba(74, 108, 247, 0.1);
   }
-  .file-input-label {
-    display: inline-block;
-    padding: 14px 28px;
-    background: #4a6cf7;
-    color: #fff;
-    border-radius: 12px;
+  .file-input { display: none; }
+  .file-note {
+    font-size: 11px;
+    color: #555;
+  }
+
+  /* ===== 貼り付けパネル ===== */
+  .paste-panel-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 300;
+  }
+  .paste-panel-backdrop.open { display: block; }
+  .paste-panel {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: -100%;
+    background: #1a1a2e;
+    border-radius: 16px 16px 0 0;
+    padding: 12px 16px 24px;
+    z-index: 301;
+    transition: bottom 0.3s ease;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .paste-panel.open { bottom: 0; }
+  .paste-panel-handle {
+    width: 40px;
+    height: 4px;
+    background: #444;
+    border-radius: 2px;
+    margin: 0 auto 10px;
+  }
+  .paste-title {
     font-size: 16px;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+  .paste-note {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 10px;
+  }
+  .paste-textarea {
+    width: 100%;
+    min-height: 200px;
+    max-height: 45vh;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    background: #0a0a0a;
+    color: #ddd;
+    font-family: 'SF Mono', Menlo, monospace;
+    font-size: 12px;
+    resize: vertical;
+    box-sizing: border-box;
+  }
+  .paste-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .paste-cancel, .paste-load {
+    flex: 1;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    font-size: 14px;
     font-weight: bold;
     cursor: pointer;
   }
-  .file-input { display: none; }
-  .file-note {
-    margin-top: 12px;
-    font-size: 13px;
-    color: #666;
+  .paste-cancel {
+    background: #222;
+    color: #aaa;
   }
+  .paste-load {
+    background: #4a6cf7;
+    color: #fff;
+  }
+
+  /* ===== トースト ===== */
+  .toast {
+    position: fixed;
+    left: 50%;
+    bottom: 90px;
+    transform: translateX(-50%) translateY(20px);
+    background: #2ecc71;
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 24px;
+    font-size: 13px;
+    font-weight: bold;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s;
+    z-index: 400;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  .toast.error { background: #e74c3c; }
 
   /* ===== フローティング進捗バー ===== */
   .floating-progress {
@@ -492,71 +642,107 @@
   }
   .floating-progress .fp-reset:active { background: #222; }
 
-  /* ===== 履歴ボタン ===== */
+  /* ===== 履歴一覧 ===== */
   .history-section {
-    margin-top: 16px;
+    margin-top: 20px;
     padding: 0 16px;
   }
-  .history-btn {
-    width: 100%;
-    padding: 12px;
-    border-radius: 12px;
-    border: 1px dashed #333;
-    background: none;
-    color: #666;
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .history-btn:active { background: #111; }
-  .history-list {
-    margin-top: 8px;
-    display: none;
-  }
-  .history-list.open { display: block; }
-  .history-item {
+  .history-heading {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 14px;
-    background: #151515;
-    border-radius: 8px;
-    margin-bottom: 6px;
-    border: 1px solid #222;
+    margin-bottom: 8px;
   }
-  .history-item .hi-name {
+  .history-heading .hh-title {
     font-size: 13px;
-    color: #ccc;
+    color: #888;
+  }
+  .history-heading .hh-count {
+    font-size: 11px;
+    color: #555;
+  }
+  .history-empty {
+    padding: 24px 16px;
+    text-align: center;
+    font-size: 12px;
+    color: #555;
+    border: 1px dashed #222;
+    border-radius: 10px;
+  }
+  .history-item {
+    position: relative;
+    padding: 12px 14px;
+    background: #151515;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    border: 1px solid #222;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .history-item:active { background: #1a1a2e; }
+  .history-item .hi-row1 {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .history-item .hi-mall {
+    font-size: 15px;
+    color: #fff;
+    font-weight: bold;
     flex: 1;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  .history-item .hi-date {
-    font-size: 11px;
-    color: #666;
-    margin-left: 8px;
+  .history-item .hi-delete {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid #333;
+    background: #0a0a0a;
+    color: #777;
+    font-size: 14px;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .history-item .hi-delete:active { background: #2a0a0a; color: #e74c3c; }
+  .history-item .hi-title {
+    font-size: 12px;
+    color: #888;
+    margin-top: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
     white-space: nowrap;
   }
-  .history-item .hi-load {
-    padding: 4px 10px;
-    border-radius: 6px;
-    border: none;
-    background: #4a6cf7;
-    color: #fff;
+  .history-item .hi-meta {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
     font-size: 11px;
-    cursor: pointer;
-    margin-left: 8px;
+    color: #666;
+    flex-wrap: wrap;
   }
-  .history-item .hi-delete {
-    padding: 4px 8px;
-    border-radius: 6px;
-    border: none;
-    background: #333;
-    color: #888;
-    font-size: 11px;
-    cursor: pointer;
-    margin-left: 4px;
+  .history-item .hi-meta span { white-space: nowrap; }
+  .history-item .hi-meta .hi-progress-text {
+    color: #4a6cf7;
+    font-weight: bold;
+  }
+  .history-item .hi-meta .hi-progress-text.done { color: #2ecc71; }
+  .history-item .hi-progressbar {
+    margin-top: 8px;
+    height: 3px;
+    background: #222;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .history-item .hi-progressbar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4a6cf7, #2ecc71);
+    border-radius: 2px;
   }
 
   /* ===== メモまとめ ===== */
@@ -959,9 +1145,13 @@
   <div class="header-top">
     <div>
       <h1 id="headerTitle">Storyboard</h1>
-      <div class="mall" id="headerMall">JSONファイルを読み込んでください</div>
+      <div class="mall" id="headerMall">構成を選んでください</div>
     </div>
-    <button class="about-btn" id="aboutBtn">?</button>
+    <div class="header-actions">
+      <button class="hdr-btn" id="homeBtn" style="display:none" title="ホーム">ホーム</button>
+      <button class="hdr-btn" id="shareBtn" style="display:none" title="共有URLをコピー">URL</button>
+      <button class="about-btn" id="aboutBtn">?</button>
+    </div>
   </div>
   <div class="shooting-date" id="headerDate" style="display:none"></div>
   <div class="progress-bar" id="headerProgress" style="display:none">
@@ -971,15 +1161,38 @@
 </div>
 
 <div id="app">
-  <div class="drop-zone" id="dropZone">
-    <label class="file-input-label">
-      JSONファイルを選択
+  <div class="home-hero">
+    <div class="home-title">構成を選んで撮影開始</div>
+    <div class="home-sub">LINEで送られたURLをタップすると、ここに構成が追加されます</div>
+  </div>
+  <div class="home-actions">
+    <label class="home-action-btn">
+      JSONファイルを読み込む
       <input type="file" class="file-input" id="fileInput" accept=".json">
     </label>
-    <div class="file-note">または、ここにドラッグ&ドロップ</div>
+    <button class="home-action-btn secondary" id="pasteOpenBtn">JSONを貼り付ける</button>
+  </div>
+  <div class="drop-zone" id="dropZone">
+    <div class="file-note">またはここにドラッグ&ドロップ</div>
   </div>
   <div class="history-section" id="historySection"></div>
 </div>
+
+<div class="paste-panel-backdrop" id="pastePanelBackdrop"></div>
+<div class="paste-panel" id="pastePanel">
+  <div class="paste-panel-handle"></div>
+  <div class="paste-panel-content">
+    <h3 class="paste-title">JSONを貼り付け</h3>
+    <div class="paste-note">LINEなどで受け取ったJSON本文をここに貼り付けてください</div>
+    <textarea class="paste-textarea" id="pasteTextarea" placeholder='{"meta": {...}, "compositions": [...]}'></textarea>
+    <div class="paste-actions">
+      <button class="paste-cancel" id="pasteCancelBtn">キャンセル</button>
+      <button class="paste-load" id="pasteLoadBtn">読み込む</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
 
 <div id="loaded" style="display:none">
   <div class="tabs" id="tabs"></div>
@@ -1029,6 +1242,38 @@ let sessionKey = ''; // localStorageのキー
 
 // チェック＆メモ状態: { "storeId:cutNo": { checked: bool, memo: string } }
 let cutState = {};
+
+// ===== 圧縮ヘルパー（CompressionStream / deflate-raw を使用） =====
+async function compressToUrlParam(str) {
+  try {
+    const bytes = new TextEncoder().encode(str);
+    const stream = new Blob([bytes]).stream().pipeThrough(new CompressionStream('deflate-raw'));
+    const compressed = new Uint8Array(await new Response(stream).arrayBuffer());
+    // base64url エンコード
+    let bin = '';
+    for (let i = 0; i < compressed.length; i++) bin += String.fromCharCode(compressed[i]);
+    return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  } catch(e) {
+    // フォールバック：素のbase64（UTF-8→btoa）
+    return 'raw:' + btoa(unescape(encodeURIComponent(str))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+}
+
+async function decompressFromUrlParam(s) {
+  // フォールバック接頭辞
+  if (s.startsWith('raw:')) {
+    const b64 = s.slice(4).replace(/-/g, '+').replace(/_/g, '/');
+    const padded = b64 + '='.repeat((4 - b64.length % 4) % 4);
+    return decodeURIComponent(escape(atob(padded)));
+  }
+  const b64 = s.replace(/-/g, '+').replace(/_/g, '/');
+  const padded = b64 + '='.repeat((4 - b64.length % 4) % 4);
+  const bin = atob(padded);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
+  return await new Response(stream).text();
+}
 
 // ===== localStorage helpers =====
 function storageKey() {
@@ -1113,52 +1358,101 @@ function saveHistory() {
   } catch(e) {}
 }
 
+function computeHistoryProgress(h) {
+  // dataSnapshotから全カット数を数え、localStorageからチェック数を数える
+  try {
+    const snap = JSON.parse(h.dataSnapshot);
+    const total = (snap.compositions || []).reduce((sum, c) => sum + (c.cuts ? c.cuts.length : 0), 0);
+    let checked = 0;
+    try {
+      const savedRaw = localStorage.getItem('storyboard_' + h.key);
+      if (savedRaw) {
+        const saved = JSON.parse(savedRaw);
+        Object.values(saved).forEach(v => { if (v && v.checked) checked++; });
+      }
+    } catch(e) {}
+    const storeCount = (snap.compositions || []).length;
+    const mall = (snap.meta && snap.meta.mall) || '';
+    const title = (snap.meta && snap.meta.title) || '';
+    return { total, checked, storeCount, mall, title };
+  } catch(e) {
+    return { total: 0, checked: 0, storeCount: 0, mall: '', title: '' };
+  }
+}
+
+function formatHistoryDate(isoStr) {
+  const d = new Date(isoStr);
+  const mm = d.getMonth()+1;
+  const dd = d.getDate();
+  const hh = d.getHours();
+  const mi = String(d.getMinutes()).padStart(2,'0');
+  return mm + '/' + dd + ' ' + hh + ':' + mi;
+}
+
 function renderHistory() {
   const section = document.getElementById('historySection');
   const history = getHistoryList();
   if (history.length === 0) {
-    section.innerHTML = '';
+    section.innerHTML = '<div class="history-heading"><div class="hh-title">過去の構成</div></div>'
+      + '<div class="history-empty">まだ読み込んだ構成はありません<br>URLタップ・JSON読み込み・貼り付けで追加されます</div>';
     return;
   }
-  let html = '<button class="history-btn" id="historyToggle">過去に読み込んだファイル (' + history.length + '件)</button>';
-  html += '<div class="history-list" id="historyList">';
+  let html = '<div class="history-heading">'
+    + '<div class="hh-title">過去の構成</div>'
+    + '<div class="hh-count">' + history.length + '件</div>'
+    + '</div>';
   history.forEach((h, i) => {
-    const d = new Date(h.date);
-    const dateStr = (d.getMonth()+1) + '/' + d.getDate() + ' ' + d.getHours() + ':' + String(d.getMinutes()).padStart(2,'0');
-    html += '<div class="history-item">';
-    html += '<div class="hi-name">' + escapeHtml(h.name) + '</div>';
-    html += '<div class="hi-date">' + dateStr + '</div>';
-    html += '<button class="hi-load" data-idx="' + i + '">開く</button>';
-    html += '<button class="hi-delete" data-idx="' + i + '">削除</button>';
+    const info = computeHistoryProgress(h);
+    const dateStr = formatHistoryDate(h.date);
+    const mallLabel = info.mall || h.name || '(不明なモール)';
+    const titleLabel = info.title || '';
+    const progressPct = info.total > 0 ? Math.round(info.checked / info.total * 100) : 0;
+    const allDone = info.total > 0 && info.checked === info.total;
+    html += '<div class="history-item" data-idx="' + i + '">';
+    html += '<div class="hi-row1">';
+    html += '<div style="flex:1;overflow:hidden">';
+    html += '<div class="hi-mall">' + escapeHtml(mallLabel) + '</div>';
+    if (titleLabel) html += '<div class="hi-title">' + escapeHtml(titleLabel) + '</div>';
+    html += '</div>';
+    html += '<button class="hi-delete" data-idx="' + i + '" aria-label="削除">&times;</button>';
+    html += '</div>';
+    html += '<div class="hi-meta">';
+    html += '<span>' + info.storeCount + '店舗</span>';
+    html += '<span>' + dateStr + ' 読込</span>';
+    if (info.total > 0) {
+      html += '<span class="hi-progress-text' + (allDone ? ' done' : '') + '">'
+        + info.checked + ' / ' + info.total + ' カット' + (allDone ? ' 完了' : '')
+        + '</span>';
+    }
+    html += '</div>';
+    if (info.total > 0) {
+      html += '<div class="hi-progressbar"><div class="hi-progressbar-fill" style="width:' + progressPct + '%"></div></div>';
+    }
     html += '</div>';
   });
-  html += '</div>';
   section.innerHTML = html;
 
-  document.getElementById('historyToggle').addEventListener('click', () => {
-    document.getElementById('historyList').classList.toggle('open');
-  });
-  section.querySelectorAll('.hi-load').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const idx = parseInt(btn.dataset.idx);
+  section.querySelectorAll('.history-item').forEach(item => {
+    item.addEventListener('click', (e) => {
+      if (e.target.closest('.hi-delete')) return;
+      const idx = parseInt(item.dataset.idx);
       const h = history[idx];
       try {
-        data = JSON.parse(h.dataSnapshot);
-        sessionKey = h.key;
-        loadState();
-        loadGeneralMemo();
-        render();
-      } catch(e) { alert('データの読み込みに失敗しました'); }
+        loadDataObject(JSON.parse(h.dataSnapshot), h.key);
+      } catch(err) { showToast('データの読み込みに失敗しました', true); }
     });
   });
   section.querySelectorAll('.hi-delete').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
       const idx = parseInt(btn.dataset.idx);
+      const target = history[idx];
+      if (!confirm('この構成を履歴から削除しますか？\n「' + (computeHistoryProgress(target).mall || target.name) + '」のチェック・メモも消えます。')) return;
       let hist = getHistoryList();
       const removed = hist.splice(idx, 1)[0];
       localStorage.setItem('storyboard_history', JSON.stringify(hist));
-      // 状態データも削除
       try { localStorage.removeItem('storyboard_' + removed.key); } catch(e) {}
+      try { localStorage.removeItem('storyboard_general_' + removed.key); } catch(e) {}
       renderHistory();
     });
   });
@@ -1184,18 +1478,128 @@ function loadFile(file) {
   const reader = new FileReader();
   reader.onload = e => {
     try {
-      data = JSON.parse(e.target.result);
-      // セッションキーはmeta情報から生成
-      sessionKey = (data.meta.mall || '') + '_' + (data.meta.title || '') + '_' + (data.meta.created || '');
-      cutState = {};
-      loadState();
-      loadGeneralMemo();
-      render();
+      loadDataObject(JSON.parse(e.target.result));
     } catch(err) {
-      alert('JSONの読み込みに失敗しました: ' + err.message);
+      showToast('JSONの読み込みに失敗しました: ' + err.message, true);
     }
   };
   reader.readAsText(file);
+}
+
+// 共通ローダー：dataオブジェクトを受け取ってアプリをロード
+function loadDataObject(obj, keyOverride) {
+  if (!obj || !obj.meta || !Array.isArray(obj.compositions)) {
+    showToast('JSONの形式が不正です', true);
+    return;
+  }
+  data = obj;
+  sessionKey = keyOverride || ((data.meta.mall || '') + '_' + (data.meta.title || '') + '_' + (data.meta.created || ''));
+  cutState = {};
+  currentIndex = 0;
+  currentSection = 'cuts';
+  loadState();
+  loadGeneralMemo();
+  // 最後に開いた構成として記憶
+  try { localStorage.setItem('storyboard_lastKey', sessionKey); } catch(e) {}
+  // 履歴に保存
+  saveHistory();
+  render();
+}
+
+// ===== URL #data= 自動ロード =====
+async function tryLoadFromUrlHash() {
+  const hash = window.location.hash || '';
+  const m = hash.match(/^#data=(.+)$/);
+  if (!m) return false;
+  try {
+    const json = await decompressFromUrlParam(m[1]);
+    const obj = JSON.parse(json);
+    // ハッシュをクリアしてブックマーク時の重複を防ぐ
+    history.replaceState(null, '', window.location.pathname + window.location.search);
+    loadDataObject(obj);
+    showToast('構成を読み込みました');
+    return true;
+  } catch(e) {
+    showToast('URL内の構成データが読み込めません', true);
+    return false;
+  }
+}
+
+// ===== ホーム・共有URL・貼り付け =====
+function goHome() {
+  data = null;
+  sessionKey = '';
+  cutState = {};
+  document.getElementById('loaded').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  document.getElementById('floatingProgress').style.display = 'none';
+  document.getElementById('homeBtn').style.display = 'none';
+  document.getElementById('shareBtn').style.display = 'none';
+  document.getElementById('headerTitle').textContent = 'Storyboard';
+  document.getElementById('headerMall').textContent = '構成を選んでください';
+  document.getElementById('headerDate').style.display = 'none';
+  document.getElementById('headerProgress').style.display = 'none';
+  document.getElementById('headerProgressText').style.display = 'none';
+  renderHistory();
+}
+
+document.getElementById('homeBtn').addEventListener('click', goHome);
+
+document.getElementById('shareBtn').addEventListener('click', async () => {
+  if (!data) return;
+  try {
+    const json = JSON.stringify(data);
+    const compressed = await compressToUrlParam(json);
+    const url = window.location.origin + window.location.pathname + '#data=' + compressed;
+    try {
+      await navigator.clipboard.writeText(url);
+      showToast('共有URLをコピーしました (' + url.length + '字)');
+    } catch(e) {
+      // クリップボードAPI失敗時はプロンプト
+      prompt('共有URL（長押しでコピー）', url);
+    }
+  } catch(e) {
+    showToast('共有URLの生成に失敗しました', true);
+  }
+});
+
+// 貼り付けパネル
+const pasteBackdrop = document.getElementById('pastePanelBackdrop');
+const pastePanel = document.getElementById('pastePanel');
+const pasteTextarea = document.getElementById('pasteTextarea');
+function openPaste() {
+  pasteTextarea.value = '';
+  pasteBackdrop.classList.add('open');
+  pastePanel.classList.add('open');
+  setTimeout(() => pasteTextarea.focus(), 200);
+}
+function closePaste() {
+  pasteBackdrop.classList.remove('open');
+  pastePanel.classList.remove('open');
+}
+document.getElementById('pasteOpenBtn').addEventListener('click', openPaste);
+document.getElementById('pasteCancelBtn').addEventListener('click', closePaste);
+pasteBackdrop.addEventListener('click', closePaste);
+document.getElementById('pasteLoadBtn').addEventListener('click', () => {
+  const txt = pasteTextarea.value.trim();
+  if (!txt) { showToast('JSONを貼り付けてください', true); return; }
+  try {
+    loadDataObject(JSON.parse(txt));
+    closePaste();
+  } catch(e) {
+    showToast('JSONの解析に失敗しました: ' + e.message, true);
+  }
+});
+
+// ===== トースト =====
+let toastTimer = null;
+function showToast(msg, isError) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.toggle('error', !!isError);
+  t.classList.add('show');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
 }
 
 // ===== 描画 =====
@@ -1203,6 +1607,8 @@ function render() {
   document.getElementById('app').style.display = 'none';
   document.getElementById('loaded').style.display = 'block';
   document.getElementById('floatingProgress').style.display = 'flex';
+  document.getElementById('homeBtn').style.display = 'inline-block';
+  document.getElementById('shareBtn').style.display = 'inline-block';
   document.getElementById('headerTitle').textContent = data.meta.title;
   document.getElementById('headerMall').textContent = data.meta.mall;
   // 撮影日（最初の構成の日付を使用）
@@ -1872,8 +2278,29 @@ function getAboutContent() {
     + '</ul>';
 }
 
-// 初期表示：履歴を表示
-renderHistory();
+// ===== 初期表示 =====
+// 1. URL #data= があれば自動ロード
+// 2. なければ最後に開いた構成を履歴から自動再開
+// 3. それもなければホーム画面（履歴一覧）を表示
+(async () => {
+  renderHistory();
+  const loadedFromUrl = await tryLoadFromUrlHash();
+  if (loadedFromUrl) return;
+  // 最後に開いた構成を自動再開
+  try {
+    const lastKey = localStorage.getItem('storyboard_lastKey');
+    if (lastKey) {
+      const history = getHistoryList();
+      const last = history.find(h => h.key === lastKey) || history[0];
+      if (last && last.dataSnapshot) {
+        loadDataObject(JSON.parse(last.dataSnapshot), last.key);
+      }
+    }
+  } catch(e) {}
+})();
+
+// ハッシュ変更時にも再ロード試行
+window.addEventListener('hashchange', () => { tryLoadFromUrlHash(); });
 </script>
 </body>
 </html>
