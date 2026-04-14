@@ -1165,31 +1165,7 @@
     <div class="home-title">構成を選んで撮影開始</div>
     <div class="home-sub">LINEで送られたURLをタップすると、ここに構成が追加されます</div>
   </div>
-  <div class="home-actions">
-    <label class="home-action-btn">
-      JSONファイルを読み込む
-      <input type="file" class="file-input" id="fileInput" accept=".json">
-    </label>
-    <button class="home-action-btn secondary" id="pasteOpenBtn">JSONを貼り付ける</button>
-  </div>
-  <div class="drop-zone" id="dropZone">
-    <div class="file-note">またはここにドラッグ&ドロップ</div>
-  </div>
   <div class="history-section" id="historySection"></div>
-</div>
-
-<div class="paste-panel-backdrop" id="pastePanelBackdrop"></div>
-<div class="paste-panel" id="pastePanel">
-  <div class="paste-panel-handle"></div>
-  <div class="paste-panel-content">
-    <h3 class="paste-title">JSONを貼り付け</h3>
-    <div class="paste-note">LINEなどで受け取ったJSON本文をここに貼り付けてください</div>
-    <textarea class="paste-textarea" id="pasteTextarea" placeholder='{"meta": {...}, "compositions": [...]}'></textarea>
-    <div class="paste-actions">
-      <button class="paste-cancel" id="pasteCancelBtn">キャンセル</button>
-      <button class="paste-load" id="pasteLoadBtn">読み込む</button>
-    </div>
-  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -1394,7 +1370,7 @@ function renderHistory() {
   const history = getHistoryList();
   if (history.length === 0) {
     section.innerHTML = '<div class="history-heading"><div class="hh-title">過去の構成</div></div>'
-      + '<div class="history-empty">まだ読み込んだ構成はありません<br>URLタップ・JSON読み込み・貼り付けで追加されます</div>';
+      + '<div class="history-empty">まだ読み込んだ構成はありません<br>LINEで送られたURLをタップすると追加されます</div>';
     return;
   }
   let html = '<div class="history-heading">'
@@ -1456,34 +1432,6 @@ function renderHistory() {
       renderHistory();
     });
   });
-}
-
-// ===== ファイル読み込み =====
-document.getElementById('fileInput').addEventListener('change', e => {
-  const file = e.target.files[0];
-  if (file) loadFile(file);
-});
-
-const dropZone = document.getElementById('dropZone');
-dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
-dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
-dropZone.addEventListener('drop', e => {
-  e.preventDefault();
-  dropZone.classList.remove('dragover');
-  const file = e.dataTransfer.files[0];
-  if (file) loadFile(file);
-});
-
-function loadFile(file) {
-  const reader = new FileReader();
-  reader.onload = e => {
-    try {
-      loadDataObject(JSON.parse(e.target.result));
-    } catch(err) {
-      showToast('JSONの読み込みに失敗しました: ' + err.message, true);
-    }
-  };
-  reader.readAsText(file);
 }
 
 // 共通ローダー：dataオブジェクトを受け取ってアプリをロード
@@ -1563,33 +1511,6 @@ document.getElementById('shareBtn').addEventListener('click', async () => {
   }
 });
 
-// 貼り付けパネル
-const pasteBackdrop = document.getElementById('pastePanelBackdrop');
-const pastePanel = document.getElementById('pastePanel');
-const pasteTextarea = document.getElementById('pasteTextarea');
-function openPaste() {
-  pasteTextarea.value = '';
-  pasteBackdrop.classList.add('open');
-  pastePanel.classList.add('open');
-  setTimeout(() => pasteTextarea.focus(), 200);
-}
-function closePaste() {
-  pasteBackdrop.classList.remove('open');
-  pastePanel.classList.remove('open');
-}
-document.getElementById('pasteOpenBtn').addEventListener('click', openPaste);
-document.getElementById('pasteCancelBtn').addEventListener('click', closePaste);
-pasteBackdrop.addEventListener('click', closePaste);
-document.getElementById('pasteLoadBtn').addEventListener('click', () => {
-  const txt = pasteTextarea.value.trim();
-  if (!txt) { showToast('JSONを貼り付けてください', true); return; }
-  try {
-    loadDataObject(JSON.parse(txt));
-    closePaste();
-  } catch(e) {
-    showToast('JSONの解析に失敗しました: ' + e.message, true);
-  }
-});
 
 // ===== トースト =====
 let toastTimer = null;
@@ -2236,7 +2157,7 @@ document.getElementById('aboutBackdrop').addEventListener('click', () => {
 function getAboutContent() {
   return ''
     + '<h2>Storyboard について</h2>'
-    + '<p>ショート動画の撮影現場で使う構成ビューアーアプリです。スマホのブラウザで開いて、構成JSONを読み込むだけで使えます。</p>'
+    + '<p>ショート動画の撮影現場で使う構成ビューアーアプリです。LINEで送られた構成URLをタップするだけで使えます。</p>'
     + '<h3>できること</h3>'
     + '<ul>'
     + '<li>構成カードを見ながら撮影を進める</li>'
@@ -2270,7 +2191,7 @@ function getAboutContent() {
 
     + '<h2>使い方</h2>'
     + '<ul>'
-    + '<li>JSONファイルを読み込む</li>'
+    + '<li>LINEで送られた構成URLをタップして開く</li>'
     + '<li>店舗タブを切り替えて撮影を進める</li>'
     + '<li>撮影したカットにチェックを入れる</li>'
     + '<li>気づきがあればメモに記入</li>'
