@@ -1149,7 +1149,6 @@
     </div>
     <div class="header-actions">
       <button class="hdr-btn" id="homeBtn" style="display:none" title="ホーム">ホーム</button>
-      <button class="hdr-btn" id="shareBtn" style="display:none" title="共有URLをコピー">URL</button>
       <button class="about-btn" id="aboutBtn">?</button>
     </div>
   </div>
@@ -1220,21 +1219,7 @@ let sessionKey = ''; // localStorageのキー
 let cutState = {};
 
 // ===== 圧縮ヘルパー（CompressionStream / deflate-raw を使用） =====
-async function compressToUrlParam(str) {
-  try {
-    const bytes = new TextEncoder().encode(str);
-    const stream = new Blob([bytes]).stream().pipeThrough(new CompressionStream('deflate-raw'));
-    const compressed = new Uint8Array(await new Response(stream).arrayBuffer());
-    // base64url エンコード
-    let bin = '';
-    for (let i = 0; i < compressed.length; i++) bin += String.fromCharCode(compressed[i]);
-    return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-  } catch(e) {
-    // フォールバック：素のbase64（UTF-8→btoa）
-    return 'raw:' + btoa(unescape(encodeURIComponent(str))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-  }
-}
-
+// URL ハッシュ（#data=...）からの読み込み専用。圧縮は generator.html 側で行う。
 async function decompressFromUrlParam(s) {
   // フォールバック接頭辞
   if (s.startsWith('raw:')) {
@@ -1473,7 +1458,7 @@ async function tryLoadFromUrlHash() {
   }
 }
 
-// ===== ホーム・共有URL・貼り付け =====
+// ===== ホーム =====
 function goHome() {
   data = null;
   sessionKey = '';
@@ -1482,7 +1467,6 @@ function goHome() {
   document.getElementById('app').style.display = 'block';
   document.getElementById('floatingProgress').style.display = 'none';
   document.getElementById('homeBtn').style.display = 'none';
-  document.getElementById('shareBtn').style.display = 'none';
   document.getElementById('headerTitle').textContent = 'Storyboard';
   document.getElementById('headerMall').textContent = '構成を選んでください';
   document.getElementById('headerDate').style.display = 'none';
@@ -1492,24 +1476,6 @@ function goHome() {
 }
 
 document.getElementById('homeBtn').addEventListener('click', goHome);
-
-document.getElementById('shareBtn').addEventListener('click', async () => {
-  if (!data) return;
-  try {
-    const json = JSON.stringify(data);
-    const compressed = await compressToUrlParam(json);
-    const url = window.location.origin + window.location.pathname + '#data=' + compressed;
-    try {
-      await navigator.clipboard.writeText(url);
-      showToast('共有URLをコピーしました (' + url.length + '字)');
-    } catch(e) {
-      // クリップボードAPI失敗時はプロンプト
-      prompt('共有URL（長押しでコピー）', url);
-    }
-  } catch(e) {
-    showToast('共有URLの生成に失敗しました', true);
-  }
-});
 
 
 // ===== トースト =====
@@ -1529,7 +1495,6 @@ function render() {
   document.getElementById('loaded').style.display = 'block';
   document.getElementById('floatingProgress').style.display = 'flex';
   document.getElementById('homeBtn').style.display = 'inline-block';
-  document.getElementById('shareBtn').style.display = 'inline-block';
   document.getElementById('headerTitle').textContent = data.meta.title;
   document.getElementById('headerMall').textContent = data.meta.mall;
   // 撮影日（最初の構成の日付を使用）
