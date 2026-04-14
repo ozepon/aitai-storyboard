@@ -1,0 +1,1879 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Storyboard</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif;
+    background: #0a0a0a;
+    color: #e8e8e8;
+    padding: 0 0 100px 0;
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* ===== ヘッダー ===== */
+  .header {
+    background: #1a1a2e;
+    padding: 14px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid #333;
+  }
+  .header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .header h1 { font-size: 13px; color: #888; font-weight: normal; }
+  .header .about-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid #444;
+    background: none;
+    color: #888;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .header .about-btn:active { background: #222; }
+  .header .mall { font-size: 17px; font-weight: bold; color: #fff; margin-top: 2px; }
+  .header .shooting-date {
+    font-size: 12px;
+    color: #aaa;
+    margin-top: 4px;
+  }
+  .header .shooting-date span {
+    color: #4a6cf7;
+    font-weight: bold;
+  }
+  .header .progress-bar {
+    margin-top: 8px;
+    height: 4px;
+    background: #222;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .header .progress-fill {
+    height: 100%;
+    background: #4a6cf7;
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+  .header .progress-text {
+    font-size: 11px;
+    color: #666;
+    margin-top: 4px;
+    text-align: right;
+  }
+
+  /* ===== 店舗タブ ===== */
+  .tabs {
+    display: flex;
+    gap: 8px;
+    padding: 10px 16px;
+    overflow-x: auto;
+    background: #111;
+    border-bottom: 1px solid #222;
+    -webkit-overflow-scrolling: touch;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    flex-shrink: 0;
+    padding: 8px 14px;
+    border-radius: 12px;
+    background: #222;
+    color: #999;
+    font-size: 13px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+  .tab.active { background: #4a6cf7; color: #fff; }
+  .tab .tab-time {
+    font-size: 10px;
+    color: #666;
+    font-weight: normal;
+  }
+  .tab.active .tab-time { color: rgba(255,255,255,0.7); }
+  .tab .tab-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #2ecc71;
+    color: #fff;
+    font-size: 10px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .tab .tab-badge.hidden { display: none; }
+
+  /* ===== セクション切り替え ===== */
+  .section-tabs {
+    display: flex;
+    gap: 0;
+    padding: 0 16px;
+    background: #111;
+    border-bottom: 1px solid #222;
+  }
+  .section-tab {
+    flex: 1;
+    padding: 10px 4px;
+    text-align: center;
+    font-size: 12px;
+    color: #666;
+    cursor: pointer;
+    border: none;
+    background: none;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .section-tab.active { color: #4a6cf7; border-bottom-color: #4a6cf7; }
+
+  /* ===== コンテンツ ===== */
+  .content { padding: 12px; }
+
+  /* ===== メタ情報 ===== */
+  .meta-row {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .meta-tag {
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    background: #222;
+    color: #aaa;
+  }
+  .meta-tag.style { background: #2a1a3e; color: #b380e0; }
+  .meta-tag.status { background: #1a3e2a; color: #80e0a0; }
+
+  /* ===== 概要カード ===== */
+  .overview-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 10px;
+    border-left: 4px solid #4a6cf7;
+  }
+  .overview-card .label {
+    font-size: 10px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+  .overview-card .value { font-size: 14px; line-height: 1.6; }
+
+  /* ===== サムネイル ===== */
+  .thumbnail-card {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 14px;
+    border: 1px solid #333;
+  }
+  .thumbnail-card .thumb-label {
+    font-size: 11px;
+    color: #4a6cf7;
+    font-weight: bold;
+    margin-bottom: 6px;
+  }
+  .thumbnail-card .thumb-telop {
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 1.5;
+  }
+  .thumbnail-card .thumb-ref {
+    margin-top: 6px;
+    font-size: 12px;
+    color: #888;
+  }
+
+  /* ===== カットカード ===== */
+  .cut-card {
+    background: #151515;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    border: 1px solid #222;
+    transition: border-color 0.3s;
+  }
+  .cut-card.checked {
+    border-color: #2ecc71;
+    opacity: 0.7;
+  }
+  .cut-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: #1a1a1a;
+    border-bottom: 1px solid #222;
+  }
+  .cut-checkbox {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    border: 2px solid #444;
+    background: none;
+    color: transparent;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .cut-checkbox.checked {
+    background: #2ecc71;
+    border-color: #2ecc71;
+    color: #fff;
+  }
+  .cut-checked-time {
+    font-size: 10px;
+    color: #2ecc71;
+    margin-left: auto;
+    white-space: nowrap;
+  }
+  .cut-no {
+    background: #4a6cf7;
+    color: #fff;
+    font-size: 12px;
+    font-weight: bold;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .cut-scene {
+    font-size: 14px;
+    font-weight: bold;
+    flex: 1;
+  }
+  .cut-body { padding: 12px 14px; }
+  .cut-telop {
+    font-size: 15px;
+    font-weight: bold;
+    line-height: 1.5;
+    color: #fff;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #222;
+  }
+  .cut-visual {
+    font-size: 13px;
+    color: #ccc;
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+  .cut-tip {
+    font-size: 12px;
+    color: #f0a030;
+    line-height: 1.5;
+    padding: 8px 10px;
+    background: rgba(240, 160, 48, 0.1);
+    border-radius: 8px;
+    margin-bottom: 8px;
+  }
+  .cut-tip::before { content: "コツ："; font-weight: bold; }
+
+  /* カラム名ラベル */
+  .cut-label {
+    font-size: 10px;
+    color: #666;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+    font-weight: bold;
+  }
+
+  /* ===== メモ ===== */
+  .cut-memo-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 0 0;
+    font-size: 12px;
+    color: #666;
+    cursor: pointer;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+  }
+  .cut-memo-toggle .arrow {
+    transition: transform 0.2s;
+    font-size: 10px;
+  }
+  .cut-memo-toggle.open .arrow { transform: rotate(90deg); }
+  .cut-memo-toggle.has-memo { color: #4a6cf7; }
+  .cut-memo-area {
+    display: none;
+    margin-top: 8px;
+  }
+  .cut-memo-area.open { display: block; }
+  .cut-memo-input {
+    width: 100%;
+    min-height: 60px;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    background: #0a0a0a;
+    color: #e8e8e8;
+    font-size: 13px;
+    font-family: inherit;
+    line-height: 1.5;
+    resize: vertical;
+  }
+  .cut-memo-input:focus {
+    outline: none;
+    border-color: #4a6cf7;
+  }
+  .cut-memo-input::placeholder { color: #444; }
+
+  /* ===== 撮影ポイント ===== */
+  .point-card {
+    background: #151515;
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    border: 1px solid #222;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #ccc;
+  }
+  .point-no {
+    display: inline-block;
+    background: #333;
+    color: #fff;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    text-align: center;
+    line-height: 22px;
+    font-size: 11px;
+    font-weight: bold;
+    margin-right: 8px;
+  }
+
+  /* ===== キャプション ===== */
+  .caption-card {
+    background: #151515;
+    border-radius: 12px;
+    padding: 14px;
+    border: 1px solid #222;
+    margin-bottom: 12px;
+  }
+  .caption-text {
+    font-size: 13px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    color: #ccc;
+  }
+  .caption-copy {
+    display: block;
+    width: 100%;
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    background: #4a6cf7;
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .caption-copy:active { background: #3a5ce7; }
+  .caption-copy.copied { background: #2ecc71; }
+
+  /* ===== ファイル選択 ===== */
+  .drop-zone {
+    border: 2px dashed #333;
+    border-radius: 16px;
+    padding: 40px 20px;
+    margin: 20px 16px;
+    text-align: center;
+    transition: all 0.3s;
+  }
+  .drop-zone.dragover {
+    border-color: #4a6cf7;
+    background: rgba(74, 108, 247, 0.1);
+  }
+  .file-input-label {
+    display: inline-block;
+    padding: 14px 28px;
+    background: #4a6cf7;
+    color: #fff;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .file-input { display: none; }
+  .file-note {
+    margin-top: 12px;
+    font-size: 13px;
+    color: #666;
+  }
+
+  /* ===== フローティング進捗バー ===== */
+  .floating-progress {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #1a1a2e;
+    border-top: 1px solid #333;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 100;
+  }
+  .floating-progress .fp-text {
+    font-size: 13px;
+    color: #aaa;
+    white-space: nowrap;
+  }
+  .floating-progress .fp-text strong {
+    color: #4a6cf7;
+    font-size: 16px;
+  }
+  .floating-progress .fp-bar {
+    flex: 1;
+    height: 6px;
+    background: #222;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .floating-progress .fp-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4a6cf7, #2ecc71);
+    border-radius: 3px;
+    transition: width 0.4s ease;
+  }
+  .floating-progress .fp-reset {
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 1px solid #444;
+    background: none;
+    color: #888;
+    font-size: 11px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .floating-progress .fp-reset:active { background: #222; }
+
+  /* ===== 履歴ボタン ===== */
+  .history-section {
+    margin-top: 16px;
+    padding: 0 16px;
+  }
+  .history-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px dashed #333;
+    background: none;
+    color: #666;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .history-btn:active { background: #111; }
+  .history-list {
+    margin-top: 8px;
+    display: none;
+  }
+  .history-list.open { display: block; }
+  .history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    background: #151515;
+    border-radius: 8px;
+    margin-bottom: 6px;
+    border: 1px solid #222;
+  }
+  .history-item .hi-name {
+    font-size: 13px;
+    color: #ccc;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .history-item .hi-date {
+    font-size: 11px;
+    color: #666;
+    margin-left: 8px;
+    white-space: nowrap;
+  }
+  .history-item .hi-load {
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: none;
+    background: #4a6cf7;
+    color: #fff;
+    font-size: 11px;
+    cursor: pointer;
+    margin-left: 8px;
+  }
+  .history-item .hi-delete {
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: none;
+    background: #333;
+    color: #888;
+    font-size: 11px;
+    cursor: pointer;
+    margin-left: 4px;
+  }
+
+  /* ===== メモまとめ ===== */
+  .memo-summary {
+    padding: 0;
+  }
+  .memo-summary-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .memo-summary-header .ms-title {
+    font-size: 15px;
+    font-weight: bold;
+    color: #fff;
+  }
+  .memo-summary-header .ms-count {
+    font-size: 12px;
+    color: #888;
+  }
+  .memo-store-group {
+    margin-bottom: 16px;
+  }
+  .memo-store-name {
+    font-size: 13px;
+    font-weight: bold;
+    color: #4a6cf7;
+    padding: 8px 0 6px;
+    border-bottom: 1px solid #222;
+    margin-bottom: 8px;
+  }
+  .memo-item {
+    background: #151515;
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 6px;
+    border: 1px solid #222;
+  }
+  .memo-item-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+  .memo-item-no {
+    background: #333;
+    color: #fff;
+    font-size: 11px;
+    font-weight: bold;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .memo-item-scene {
+    font-size: 12px;
+    color: #aaa;
+  }
+  .memo-item-text {
+    font-size: 13px;
+    color: #e8e8e8;
+    line-height: 1.6;
+    white-space: pre-wrap;
+  }
+  .memo-empty {
+    text-align: center;
+    padding: 40px 16px;
+    color: #555;
+    font-size: 14px;
+  }
+  .memo-copy-all {
+    display: block;
+    width: 100%;
+    margin-top: 16px;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    background: #25D366;
+    color: #fff;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .memo-copy-all:active { background: #1da851; }
+  .memo-copy-all.copied { background: #4a6cf7; }
+  .memo-copy-store {
+    display: block;
+    width: 100%;
+    margin-top: 8px;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    background: none;
+    color: #aaa;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .memo-copy-store:active { background: #222; }
+  .memo-copy-store.copied { background: #4a6cf7; color: #fff; border-color: #4a6cf7; }
+
+  /* ===== メモパネル（スライドアップ） ===== */
+  .memo-panel-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 200;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .memo-panel-backdrop.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .memo-panel {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    max-height: 85vh;
+    background: #111;
+    border-radius: 16px 16px 0 0;
+    z-index: 201;
+    transform: translateY(100%);
+    transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+    display: flex;
+    flex-direction: column;
+  }
+  .memo-panel.show {
+    transform: translateY(0);
+  }
+  .memo-panel-handle {
+    width: 36px;
+    height: 4px;
+    background: #444;
+    border-radius: 2px;
+    margin: 10px auto 0;
+    flex-shrink: 0;
+  }
+  .memo-panel-content {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 12px 16px 32px;
+    flex: 1;
+  }
+
+  /* フローティングバーの作業報告ボタン */
+  .fp-report-btn {
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 1px solid #444;
+    background: #222;
+    color: #aaa;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.3s;
+  }
+  .fp-report-btn:active { background: #333; }
+  /* 超活性化：全撮影完了時 */
+  .fp-report-btn.all-done {
+    background: #25D366;
+    color: #fff;
+    border-color: #25D366;
+    animation: reportPulse 1.5s ease-in-out infinite;
+  }
+  .fp-report-btn.all-done:active { background: #1da851; }
+  @keyframes reportPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.5); }
+    50% { box-shadow: 0 0 0 8px rgba(37, 211, 102, 0); }
+  }
+
+  /* ===== 作業報告パネル内 ===== */
+  .report-panel-title {
+    font-size: 17px;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+  .report-panel-sub {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 16px;
+  }
+  .report-status-card {
+    background: #151515;
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 12px;
+    border: 1px solid #222;
+  }
+  .report-status-card .rs-label {
+    font-size: 11px;
+    color: #888;
+    margin-bottom: 6px;
+  }
+  .report-status-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+  }
+  .report-status-row .rs-store {
+    font-size: 13px;
+    color: #ccc;
+  }
+  .report-status-row .rs-badge {
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: bold;
+  }
+  .report-status-row .rs-badge.done { background: #1a3e2a; color: #2ecc71; }
+  .report-status-row .rs-badge.wip { background: #3e2a1a; color: #f0a030; }
+
+  .report-section-label {
+    font-size: 12px;
+    color: #666;
+    font-weight: bold;
+    margin: 16px 0 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #222;
+  }
+
+  .report-general-memo {
+    width: 100%;
+    min-height: 80px;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #333;
+    background: #0a0a0a;
+    color: #e8e8e8;
+    font-size: 14px;
+    font-family: inherit;
+    line-height: 1.6;
+    resize: vertical;
+    margin-bottom: 12px;
+  }
+  .report-general-memo:focus { outline: none; border-color: #4a6cf7; }
+  .report-general-memo::placeholder { color: #444; }
+
+  .report-copy-btn {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    background: #25D366;
+    color: #fff;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-top: 8px;
+  }
+  .report-copy-btn:active { background: #1da851; }
+  .report-copy-btn.copied { background: #4a6cf7; }
+
+  /* ===== Aboutパネル ===== */
+  .about-panel-backdrop {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+    z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+  }
+  .about-panel-backdrop.show { opacity: 1; pointer-events: auto; }
+  .about-panel {
+    position: fixed; left: 0; right: 0; bottom: 0;
+    max-height: 85vh; background: #111;
+    border-radius: 16px 16px 0 0; z-index: 201;
+    transform: translateY(100%);
+    transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+    display: flex; flex-direction: column;
+  }
+  .about-panel.show { transform: translateY(0); }
+  .about-panel-handle {
+    width: 36px; height: 4px; background: #444;
+    border-radius: 2px; margin: 10px auto 0; flex-shrink: 0;
+  }
+  .about-panel-content {
+    overflow-y: auto; -webkit-overflow-scrolling: touch;
+    padding: 16px 20px 32px; flex: 1;
+    font-size: 14px; line-height: 1.8; color: #ccc;
+  }
+  .about-panel-content h2 {
+    font-size: 16px; color: #fff; margin: 20px 0 8px; padding-bottom: 4px;
+    border-bottom: 1px solid #222;
+  }
+  .about-panel-content h2:first-child { margin-top: 0; }
+  .about-panel-content h3 {
+    font-size: 14px; color: #4a6cf7; margin: 14px 0 6px;
+  }
+  .about-panel-content ul {
+    padding-left: 20px; margin: 6px 0;
+  }
+  .about-panel-content li { margin-bottom: 4px; }
+  .about-panel-content p { margin: 6px 0; }
+  .about-panel-content .highlight {
+    background: #1a1a2e; border-radius: 8px; padding: 10px 14px;
+    margin: 8px 0; border-left: 3px solid #4a6cf7;
+  }
+
+  /* ===== 達成オーバーレイ ===== */
+  .goal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.85);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+  }
+  .goal-overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .goal-icon {
+    font-size: 72px;
+    animation: goalBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .goal-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #fff;
+    margin-top: 16px;
+    animation: goalFadeUp 0.6s 0.2s both;
+  }
+  .goal-sub {
+    font-size: 14px;
+    color: #aaa;
+    margin-top: 8px;
+    animation: goalFadeUp 0.6s 0.35s both;
+  }
+  .goal-store {
+    font-size: 18px;
+    font-weight: bold;
+    color: #4a6cf7;
+    margin-top: 12px;
+    animation: goalFadeUp 0.6s 0.45s both;
+  }
+  .goal-dismiss {
+    margin-top: 28px;
+    padding: 12px 32px;
+    border-radius: 24px;
+    border: none;
+    background: #4a6cf7;
+    color: #fff;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    animation: goalFadeUp 0.6s 0.55s both;
+    transition: background 0.2s;
+  }
+  .goal-dismiss:active { background: #3a5ce7; }
+
+  @keyframes goalBounce {
+    0% { transform: scale(0); opacity: 0; }
+    60% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(1); }
+  }
+  @keyframes goalFadeUp {
+    0% { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+
+  /* 紙吹雪 */
+  .confetti-container {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    top: -10px;
+    animation: confettiFall linear forwards;
+  }
+  @keyframes confettiFall {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    80% { opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <h1 id="headerTitle">Storyboard</h1>
+      <div class="mall" id="headerMall">JSONファイルを読み込んでください</div>
+    </div>
+    <button class="about-btn" id="aboutBtn">?</button>
+  </div>
+  <div class="shooting-date" id="headerDate" style="display:none"></div>
+  <div class="progress-bar" id="headerProgress" style="display:none">
+    <div class="progress-fill" id="headerProgressFill"></div>
+  </div>
+  <div class="progress-text" id="headerProgressText" style="display:none"></div>
+</div>
+
+<div id="app">
+  <div class="drop-zone" id="dropZone">
+    <label class="file-input-label">
+      JSONファイルを選択
+      <input type="file" class="file-input" id="fileInput" accept=".json">
+    </label>
+    <div class="file-note">または、ここにドラッグ&ドロップ</div>
+  </div>
+  <div class="history-section" id="historySection"></div>
+</div>
+
+<div id="loaded" style="display:none">
+  <div class="tabs" id="tabs"></div>
+  <div class="section-tabs" id="sectionTabs">
+    <button class="section-tab active" data-section="cuts">構成</button>
+    <button class="section-tab" data-section="overview">概要</button>
+    <button class="section-tab" data-section="points">ポイント</button>
+    <button class="section-tab" data-section="caption">キャプション</button>
+  </div>
+  <div class="content" id="content"></div>
+</div>
+
+<div class="memo-panel-backdrop" id="memoPanelBackdrop"></div>
+<div class="memo-panel" id="memoPanel">
+  <div class="memo-panel-handle"></div>
+  <div class="memo-panel-content" id="memoPanelContent"></div>
+</div>
+
+<div class="about-panel-backdrop" id="aboutBackdrop"></div>
+<div class="about-panel" id="aboutPanel">
+  <div class="about-panel-handle"></div>
+  <div class="about-panel-content" id="aboutContent"></div>
+</div>
+
+<div class="goal-overlay" id="goalOverlay">
+  <div class="confetti-container" id="confettiContainer"></div>
+  <div class="goal-icon" id="goalIcon"></div>
+  <div class="goal-title" id="goalTitle"></div>
+  <div class="goal-sub" id="goalSub"></div>
+  <div class="goal-store" id="goalStore"></div>
+  <button class="goal-dismiss" id="goalDismiss">OK</button>
+</div>
+
+<div class="floating-progress" id="floatingProgress" style="display:none">
+  <div class="fp-text"><strong id="fpCount">0</strong>/<span id="fpTotal">0</span></div>
+  <div class="fp-bar"><div class="fp-bar-fill" id="fpBarFill"></div></div>
+  <button class="fp-report-btn" id="fpReportBtn">作業報告</button>
+  <button class="fp-reset" id="fpReset">リセット</button>
+</div>
+
+<script>
+// ===== State =====
+let data = null;
+let currentIndex = 0;
+let currentSection = 'cuts';
+let sessionKey = ''; // localStorageのキー
+
+// チェック＆メモ状態: { "storeId:cutNo": { checked: bool, memo: string } }
+let cutState = {};
+
+// ===== localStorage helpers =====
+function storageKey() {
+  return 'storyboard_' + sessionKey;
+}
+
+function saveState() {
+  if (!sessionKey) return;
+  try {
+    localStorage.setItem(storageKey(), JSON.stringify(cutState));
+    // 履歴にも保存
+    saveHistory();
+  } catch(e) {}
+}
+
+function loadState() {
+  if (!sessionKey) return;
+  try {
+    const saved = localStorage.getItem(storageKey());
+    if (saved) cutState = JSON.parse(saved);
+  } catch(e) {}
+}
+
+function getCutKey(compositionId, cutNo) {
+  return compositionId + ':' + cutNo;
+}
+
+function getCutData(compositionId, cutNo) {
+  const key = getCutKey(compositionId, cutNo);
+  return cutState[key] || { checked: false, memo: '', checkedAt: '' };
+}
+
+function setCutChecked(compositionId, cutNo, checked) {
+  const key = getCutKey(compositionId, cutNo);
+  if (!cutState[key]) cutState[key] = { checked: false, memo: '', checkedAt: '' };
+  cutState[key].checked = checked;
+  cutState[key].checkedAt = checked ? new Date().toISOString() : '';
+  saveState();
+}
+
+function formatCheckedTime(isoStr) {
+  if (!isoStr) return '';
+  const d = new Date(isoStr);
+  return d.getHours() + ':' + String(d.getMinutes()).padStart(2, '0');
+}
+
+function setCutMemo(compositionId, cutNo, memo) {
+  const key = getCutKey(compositionId, cutNo);
+  if (!cutState[key]) cutState[key] = { checked: false, memo: '' };
+  cutState[key].memo = memo;
+  saveState();
+  updateReportButton();
+}
+
+// ===== 履歴管理 =====
+function getHistoryList() {
+  try {
+    const h = localStorage.getItem('storyboard_history');
+    return h ? JSON.parse(h) : [];
+  } catch(e) { return []; }
+}
+
+function saveHistory() {
+  if (!data || !sessionKey) return;
+  try {
+    let history = getHistoryList();
+    const existing = history.findIndex(h => h.key === sessionKey);
+    const entry = {
+      key: sessionKey,
+      name: data.meta.mall + ' - ' + data.meta.title,
+      date: new Date().toISOString(),
+      dataSnapshot: JSON.stringify(data)
+    };
+    if (existing >= 0) {
+      history[existing] = entry;
+    } else {
+      history.unshift(entry);
+    }
+    // 最大10件
+    history = history.slice(0, 10);
+    localStorage.setItem('storyboard_history', JSON.stringify(history));
+  } catch(e) {}
+}
+
+function renderHistory() {
+  const section = document.getElementById('historySection');
+  const history = getHistoryList();
+  if (history.length === 0) {
+    section.innerHTML = '';
+    return;
+  }
+  let html = '<button class="history-btn" id="historyToggle">過去に読み込んだファイル (' + history.length + '件)</button>';
+  html += '<div class="history-list" id="historyList">';
+  history.forEach((h, i) => {
+    const d = new Date(h.date);
+    const dateStr = (d.getMonth()+1) + '/' + d.getDate() + ' ' + d.getHours() + ':' + String(d.getMinutes()).padStart(2,'0');
+    html += '<div class="history-item">';
+    html += '<div class="hi-name">' + escapeHtml(h.name) + '</div>';
+    html += '<div class="hi-date">' + dateStr + '</div>';
+    html += '<button class="hi-load" data-idx="' + i + '">開く</button>';
+    html += '<button class="hi-delete" data-idx="' + i + '">削除</button>';
+    html += '</div>';
+  });
+  html += '</div>';
+  section.innerHTML = html;
+
+  document.getElementById('historyToggle').addEventListener('click', () => {
+    document.getElementById('historyList').classList.toggle('open');
+  });
+  section.querySelectorAll('.hi-load').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = parseInt(btn.dataset.idx);
+      const h = history[idx];
+      try {
+        data = JSON.parse(h.dataSnapshot);
+        sessionKey = h.key;
+        loadState();
+        loadGeneralMemo();
+        render();
+      } catch(e) { alert('データの読み込みに失敗しました'); }
+    });
+  });
+  section.querySelectorAll('.hi-delete').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = parseInt(btn.dataset.idx);
+      let hist = getHistoryList();
+      const removed = hist.splice(idx, 1)[0];
+      localStorage.setItem('storyboard_history', JSON.stringify(hist));
+      // 状態データも削除
+      try { localStorage.removeItem('storyboard_' + removed.key); } catch(e) {}
+      renderHistory();
+    });
+  });
+}
+
+// ===== ファイル読み込み =====
+document.getElementById('fileInput').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (file) loadFile(file);
+});
+
+const dropZone = document.getElementById('dropZone');
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file) loadFile(file);
+});
+
+function loadFile(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      data = JSON.parse(e.target.result);
+      // セッションキーはmeta情報から生成
+      sessionKey = (data.meta.mall || '') + '_' + (data.meta.title || '') + '_' + (data.meta.created || '');
+      cutState = {};
+      loadState();
+      loadGeneralMemo();
+      render();
+    } catch(err) {
+      alert('JSONの読み込みに失敗しました: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ===== 描画 =====
+function render() {
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('loaded').style.display = 'block';
+  document.getElementById('floatingProgress').style.display = 'flex';
+  document.getElementById('headerTitle').textContent = data.meta.title;
+  document.getElementById('headerMall').textContent = data.meta.mall;
+  // 撮影日（最初の構成の日付を使用）
+  const dateEl = document.getElementById('headerDate');
+  const shootDate = data.compositions[0] ? data.compositions[0].shootingDate : '';
+  const photographer = data.compositions[0] ? data.compositions[0].photographer : '';
+  if (shootDate) {
+    dateEl.style.display = 'block';
+    dateEl.innerHTML = '撮影日 <span>' + escapeHtml(shootDate) + '</span>'
+      + (photographer ? '  ' + escapeHtml(photographer) : '');
+  }
+  document.getElementById('headerProgress').style.display = 'block';
+  document.getElementById('headerProgressText').style.display = 'block';
+
+  // タブ
+  const tabs = document.getElementById('tabs');
+  tabs.innerHTML = data.compositions.map((c, i) => {
+    const total = c.cuts.length;
+    const checked = c.cuts.filter(cut => getCutData(c.id, cut.no).checked).length;
+    const allDone = checked === total && total > 0;
+    const timeStr = c.shootingTime ? c.shootingTime : '';
+    return '<button class="tab ' + (i === currentIndex ? 'active' : '') + '" data-index="' + i + '">'
+      + '<span class="tab-store">' + escapeHtml(c.store) + '</span>'
+      + (timeStr ? '<span class="tab-time">' + escapeHtml(timeStr) + '</span>' : '')
+      + '<span class="tab-badge ' + (allDone ? '' : 'hidden') + '">&#10003;</span>'
+      + '</button>';
+  }).join('');
+
+  tabs.querySelectorAll('.tab').forEach(t => {
+    t.addEventListener('click', () => {
+      currentIndex = parseInt(t.dataset.index);
+      tabs.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+      renderContent();
+    });
+  });
+
+  // セクションタブ
+  document.querySelectorAll('.section-tab').forEach(t => {
+    t.addEventListener('click', () => {
+      currentSection = t.dataset.section;
+      document.querySelectorAll('.section-tab').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+      renderContent();
+    });
+  });
+
+  // リセットボタン
+  document.getElementById('fpReset').onclick = () => {
+    if (confirm('この店舗のチェック・メモをすべてリセットしますか？')) {
+      const c = data.compositions[currentIndex];
+      c.cuts.forEach(cut => {
+        const key = getCutKey(c.id, cut.no);
+        delete cutState[key];
+      });
+      saveState();
+      renderContent();
+      updateTabs();
+    }
+  };
+
+  // 作業報告パネル
+  document.getElementById('fpReportBtn').onclick = () => openReportPanel();
+  document.getElementById('memoPanelBackdrop').onclick = () => closeReportPanel();
+
+  renderContent();
+  updateReportButton();
+}
+
+function renderContent() {
+  const c = data.compositions[currentIndex];
+  const el = document.getElementById('content');
+  let html = '';
+
+  if (currentSection === 'overview') {
+    html += renderOverview(c);
+  } else if (currentSection === 'cuts') {
+    html += renderCuts(c);
+  } else if (currentSection === 'points') {
+    html += renderPoints(c);
+  } else if (currentSection === 'caption') {
+    html += renderCaption(c);
+  }
+
+  el.innerHTML = html;
+
+  // イベント登録
+  if (currentSection === 'cuts') {
+    bindCutEvents(c);
+  }
+
+  updateProgress(c);
+}
+
+function renderOverview(c) {
+  let html = '';
+  html += '<div class="overview-card"><div class="label">届ける相手</div><div class="value">' + escapeHtml(c.overview.target) + '</div></div>';
+  html += '<div class="overview-card"><div class="label">伝えること</div><div class="value">' + escapeHtml(c.overview.message) + '</div></div>';
+  html += '<div class="overview-card"><div class="label">スタッフ出演</div><div class="value">' + escapeHtml(c.overview.staffAppearance) + '</div></div>';
+  html += '<div class="thumbnail-card">';
+  html += '<div class="thumb-label">サムネイル</div>';
+  html += '<div class="thumb-telop">' + escapeHtml(c.thumbnail.telop) + '</div>';
+  html += '<div class="thumb-ref">絵：No.' + escapeHtml(c.thumbnail.cutRef) + '</div>';
+  html += '</div>';
+  return html;
+}
+
+function renderCuts(c) {
+  let html = '';
+  c.cuts.forEach(cut => {
+    const cd = getCutData(c.id, cut.no);
+    const checkedClass = cd.checked ? ' checked' : '';
+    const hasMemo = cd.memo ? ' has-memo' : '';
+
+    html += '<div class="cut-card' + checkedClass + '" data-cut="' + cut.no + '">';
+    html += '<div class="cut-header">';
+    html += '<button class="cut-checkbox' + checkedClass + '" data-cut="' + cut.no + '">' + (cd.checked ? '&#10003;' : '') + '</button>';
+    html += '<div class="cut-no">' + escapeHtml(cut.no) + '</div>';
+    html += '<div class="cut-scene"><span class="cut-label">シーン</span>' + escapeHtml(cut.scene) + '</div>';
+    if (cd.checkedAt) {
+      html += '<span class="cut-checked-time">' + formatCheckedTime(cd.checkedAt) + '</span>';
+    }
+    html += '</div>';
+    html += '<div class="cut-body">';
+    html += '<div class="cut-label">テロップ / ナレーション</div>';
+    html += '<div class="cut-telop">' + escapeHtml(cut.telop) + '</div>';
+    html += '<div class="cut-label">映像内容</div>';
+    html += '<div class="cut-visual">' + escapeHtml(cut.visual) + '</div>';
+    if (cut.tip) {
+      html += '<div class="cut-label">撮影のコツ</div>';
+      html += '<div class="cut-tip">' + escapeHtml(cut.tip) + '</div>';
+    }
+    html += '<button class="cut-memo-toggle' + hasMemo + '" data-cut="' + cut.no + '">';
+    html += '<span class="arrow">&#9654;</span> メモ' + (cd.memo ? '（記入あり）' : '');
+    html += '</button>';
+    html += '<div class="cut-memo-area" data-cut="' + cut.no + '">';
+    html += '<textarea class="cut-memo-input" data-cut="' + cut.no + '" placeholder="撮影時のメモを入力...">' + escapeHtml(cd.memo) + '</textarea>';
+    html += '</div>';
+    html += '</div></div>';
+  });
+  return html;
+}
+
+function renderPoints(c) {
+  let html = '';
+  c.shootingPoints.forEach((p, i) => {
+    const friendly = friendlyPointText(p);
+    html += '<div class="point-card"><span class="point-no">' + (i+1) + '</span>' + escapeHtml(friendly) + '</div>';
+  });
+  return html;
+}
+
+// 撮影ポイント内のアイテム表現を「便利だよ！」ニュアンスに変換
+function friendlyPointText(text) {
+  // 「三脚やスタンドに固定し」→「三脚やスタンドがあると便利！固定して」のように
+  const items = ['三脚', 'スタンド', 'ジンバル', 'ライト', '照明', 'レフ板', 'マイク', '一脚', 'リモコン', 'クリップ'];
+  let result = text;
+  items.forEach(item => {
+    // 「三脚やスタンドに固定し」パターン
+    const regex1 = new RegExp('(' + item + '[^。、]*?)に固定し', 'g');
+    result = result.replace(regex1, '$1があると便利！固定して');
+    // 「三脚を使って」パターン
+    const regex2 = new RegExp(item + 'を使って', 'g');
+    result = result.replace(regex2, item + 'があると便利！使って');
+    // 「三脚で」パターン（短い）
+    const regex3 = new RegExp(item + 'で(撮影|固定)', 'g');
+    result = result.replace(regex3, item + 'があると便利！$1');
+  });
+  return result;
+}
+
+function renderCaption(c) {
+  let html = '<div class="caption-card">';
+  html += '<div class="caption-text">' + escapeHtml(c.caption) + '</div>';
+  html += '<button class="caption-copy" onclick="copyCaption(this)">キャプションをコピー</button>';
+  html += '</div>';
+  return html;
+}
+
+function bindCutEvents(c) {
+  // チェックボックス
+  document.querySelectorAll('.cut-checkbox').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const cutNo = btn.dataset.cut;
+      const cd = getCutData(c.id, cutNo);
+      const newChecked = !cd.checked;
+      setCutChecked(c.id, cutNo, newChecked);
+
+      // UI更新
+      btn.classList.toggle('checked', newChecked);
+      btn.innerHTML = newChecked ? '&#10003;' : '';
+      const card = btn.closest('.cut-card');
+      card.classList.toggle('checked', newChecked);
+      // 時刻表示の更新
+      let timeEl = card.querySelector('.cut-checked-time');
+      if (newChecked) {
+        const cdAfter = getCutData(c.id, cutNo);
+        if (!timeEl) {
+          timeEl = document.createElement('span');
+          timeEl.className = 'cut-checked-time';
+          card.querySelector('.cut-header').appendChild(timeEl);
+        }
+        timeEl.textContent = formatCheckedTime(cdAfter.checkedAt);
+      } else if (timeEl) {
+        timeEl.remove();
+      }
+
+      updateProgress(c);
+      updateTabs();
+      updateReportButton();
+
+      // 全カット完了チェック
+      if (newChecked) {
+        const total = c.cuts.length;
+        const checked = c.cuts.filter(cut => getCutData(c.id, cut.no).checked).length;
+        if (checked === total && total > 0) {
+          // 全店舗完了かチェック
+          const allStoresDone = data.compositions.every(comp =>
+            comp.cuts.length > 0 && comp.cuts.every(cut => getCutData(comp.id, cut.no).checked)
+          );
+          showGoal(c.store, allStoresDone);
+        }
+      }
+    });
+  });
+
+  // メモトグル
+  document.querySelectorAll('.cut-memo-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const cutNo = btn.dataset.cut;
+      const area = document.querySelector('.cut-memo-area[data-cut="' + cutNo + '"]');
+      btn.classList.toggle('open');
+      area.classList.toggle('open');
+      if (area.classList.contains('open')) {
+        area.querySelector('textarea').focus();
+      }
+    });
+  });
+
+  // メモ入力
+  let memoTimer = null;
+  document.querySelectorAll('.cut-memo-input').forEach(textarea => {
+    textarea.addEventListener('input', () => {
+      const cutNo = textarea.dataset.cut;
+      clearTimeout(memoTimer);
+      memoTimer = setTimeout(() => {
+        setCutMemo(c.id, cutNo, textarea.value);
+        // トグルボタンの表示更新
+        const toggle = document.querySelector('.cut-memo-toggle[data-cut="' + cutNo + '"]');
+        if (toggle) {
+          toggle.classList.toggle('has-memo', textarea.value.length > 0);
+          const label = textarea.value.length > 0 ? 'メモ（記入あり）' : 'メモ';
+          toggle.innerHTML = '<span class="arrow">&#9654;</span> ' + label;
+          if (toggle.classList.contains('open')) {
+            toggle.querySelector('.arrow').style.transform = 'rotate(90deg)';
+          }
+        }
+      }, 500);
+    });
+  });
+}
+
+function updateProgress(c) {
+  const total = c.cuts.length;
+  const checked = c.cuts.filter(cut => getCutData(c.id, cut.no).checked).length;
+  const pct = total > 0 ? (checked / total * 100) : 0;
+
+  // ヘッダー
+  document.getElementById('headerProgressFill').style.width = pct + '%';
+  document.getElementById('headerProgressText').textContent = checked + '/' + total + ' カット撮影済み';
+
+  // フローティング
+  document.getElementById('fpCount').textContent = checked;
+  document.getElementById('fpTotal').textContent = total;
+  document.getElementById('fpBarFill').style.width = pct + '%';
+}
+
+function updateTabs() {
+  const tabs = document.querySelectorAll('.tab');
+  tabs.forEach(t => {
+    const idx = parseInt(t.dataset.index);
+    const c = data.compositions[idx];
+    const total = c.cuts.length;
+    const checked = c.cuts.filter(cut => getCutData(c.id, cut.no).checked).length;
+    const badge = t.querySelector('.tab-badge');
+    if (badge) {
+      badge.classList.toggle('hidden', checked !== total || total === 0);
+    }
+  });
+}
+
+// ===== 作業報告パネル =====
+let generalMemo = ''; // 全体メモ（localStorageに保存）
+
+function getGeneralMemoKey() {
+  return 'storyboard_general_' + sessionKey;
+}
+function saveGeneralMemo() {
+  if (!sessionKey) return;
+  try { localStorage.setItem(getGeneralMemoKey(), generalMemo); } catch(e) {}
+}
+function loadGeneralMemo() {
+  if (!sessionKey) return;
+  try { generalMemo = localStorage.getItem(getGeneralMemoKey()) || ''; } catch(e) {}
+}
+
+function isAllDone() {
+  if (!data) return false;
+  return data.compositions.every(comp =>
+    comp.cuts.length > 0 && comp.cuts.every(cut => getCutData(comp.id, cut.no).checked)
+  );
+}
+
+function updateReportButton() {
+  const btn = document.getElementById('fpReportBtn');
+  if (!btn || !data) return;
+  btn.classList.toggle('all-done', isAllDone());
+}
+
+function openReportPanel() {
+  const panel = document.getElementById('memoPanel');
+  const backdrop = document.getElementById('memoPanelBackdrop');
+  const content = document.getElementById('memoPanelContent');
+  loadGeneralMemo();
+
+  content.innerHTML = renderReport();
+  bindReportEvents();
+
+  requestAnimationFrame(() => {
+    backdrop.classList.add('show');
+    panel.classList.add('show');
+  });
+}
+
+function closeReportPanel() {
+  // 閉じる前に全体メモを保存
+  const textarea = document.querySelector('.report-general-memo');
+  if (textarea) {
+    generalMemo = textarea.value;
+    saveGeneralMemo();
+  }
+  document.getElementById('memoPanel').classList.remove('show');
+  document.getElementById('memoPanelBackdrop').classList.remove('show');
+}
+
+function renderReport() {
+  let html = '';
+  const allDone = isAllDone();
+
+  html += '<div class="report-panel-title">作業報告</div>';
+  html += '<div class="report-panel-sub">撮影が終わったらコピーしてLINEで送ってください</div>';
+
+  // 撮影ステータス一覧
+  html += '<div class="report-status-card">';
+  html += '<div class="rs-label">撮影ステータス</div>';
+  data.compositions.forEach(comp => {
+    const total = comp.cuts.length;
+    const checked = comp.cuts.filter(cut => getCutData(comp.id, cut.no).checked).length;
+    const done = checked === total && total > 0;
+    html += '<div class="report-status-row">';
+    html += '<span class="rs-store">' + escapeHtml(comp.store) + '</span>';
+    html += '<span class="rs-badge ' + (done ? 'done' : 'wip') + '">'
+      + (done ? checked + '/' + total + ' 完了' : checked + '/' + total)
+      + '</span>';
+    html += '</div>';
+  });
+  html += '</div>';
+
+  // カット別メモ（あれば）
+  let hasCutMemos = false;
+  let cutMemosHtml = '';
+  data.compositions.forEach(comp => {
+    const memos = [];
+    comp.cuts.forEach(cut => {
+      const cd = getCutData(comp.id, cut.no);
+      if (cd.memo && cd.memo.trim()) {
+        memos.push({ no: cut.no, scene: cut.scene, memo: cd.memo.trim() });
+      }
+    });
+    if (memos.length > 0) {
+      hasCutMemos = true;
+      cutMemosHtml += '<div class="memo-store-group">';
+      cutMemosHtml += '<div class="memo-store-name">' + escapeHtml(comp.store) + '</div>';
+      memos.forEach(m => {
+        cutMemosHtml += '<div class="memo-item">';
+        cutMemosHtml += '<div class="memo-item-header">';
+        cutMemosHtml += '<span class="memo-item-no">' + escapeHtml(m.no) + '</span>';
+        cutMemosHtml += '<span class="memo-item-scene">' + escapeHtml(m.scene) + '</span>';
+        cutMemosHtml += '</div>';
+        cutMemosHtml += '<div class="memo-item-text">' + escapeHtml(m.memo) + '</div>';
+        cutMemosHtml += '</div>';
+      });
+      cutMemosHtml += '</div>';
+    }
+  });
+
+  if (hasCutMemos) {
+    html += '<div class="report-section-label">カット別メモ</div>';
+    html += cutMemosHtml;
+  }
+
+  // 全体メモ入力欄
+  html += '<div class="report-section-label">全体メモ（自由記入）</div>';
+  html += '<textarea class="report-general-memo" id="reportGeneralMemo" placeholder="全体の気づきや連絡事項があれば記入してください">'
+    + escapeHtml(generalMemo) + '</textarea>';
+
+  // コピーボタン
+  html += '<button class="report-copy-btn" id="reportCopyBtn">作業報告をコピー</button>';
+
+  return html;
+}
+
+function buildReportText() {
+  const mall = data.meta.mall || '';
+  const now = new Date();
+  const dateStr = now.getFullYear() + '/' + (now.getMonth()+1) + '/' + now.getDate()
+    + ' ' + now.getHours() + ':' + String(now.getMinutes()).padStart(2,'0');
+  let lines = [];
+
+  lines.push('【作業報告】' + mall);
+  lines.push(dateStr);
+  lines.push('');
+
+  // 撮影ステータス
+  data.compositions.forEach(comp => {
+    const total = comp.cuts.length;
+    const checkedCuts = comp.cuts.filter(cut => getCutData(comp.id, cut.no).checked);
+    const checked = checkedCuts.length;
+    const done = checked === total && total > 0;
+    // 最後にチェックした時刻を取得
+    let lastTime = '';
+    if (checkedCuts.length > 0) {
+      const times = checkedCuts.map(cut => getCutData(comp.id, cut.no).checkedAt).filter(t => t).sort();
+      if (times.length > 0) {
+        const d = new Date(times[times.length - 1]);
+        lastTime = ' (' + d.getHours() + ':' + String(d.getMinutes()).padStart(2,'0') + '完了)';
+      }
+    }
+    lines.push((done ? '\u2705' : '\u23F3') + ' ' + comp.store + ' ' + checked + '/' + total + lastTime);
+  });
+  lines.push('');
+
+  // カット別メモ
+  let hasCutMemos = false;
+  data.compositions.forEach(comp => {
+    const memos = [];
+    comp.cuts.forEach(cut => {
+      const cd = getCutData(comp.id, cut.no);
+      if (cd.memo && cd.memo.trim()) {
+        memos.push({ no: cut.no, scene: cut.scene, memo: cd.memo.trim() });
+      }
+    });
+    if (memos.length > 0) {
+      if (!hasCutMemos) {
+        lines.push('\u25A0 カット別メモ');
+        hasCutMemos = true;
+      }
+      lines.push('[' + comp.store + ']');
+      memos.forEach(m => {
+        lines.push('No.' + m.no + ' ' + m.scene);
+        lines.push(m.memo);
+        lines.push('');
+      });
+    }
+  });
+
+  // 全体メモ
+  const textarea = document.getElementById('reportGeneralMemo');
+  const gMemo = textarea ? textarea.value.trim() : generalMemo.trim();
+  if (gMemo) {
+    lines.push('\u25A0 全体メモ');
+    lines.push(gMemo);
+    lines.push('');
+  }
+
+  // メモが一切ない場合のデフォルト文言
+  if (!hasCutMemos && !gMemo) {
+    lines.push('特に問題なく撮影完了しました！');
+    lines.push('');
+  }
+
+  return lines.join('\n').trim();
+}
+
+function bindReportEvents() {
+  // 全体メモの自動保存
+  const textarea = document.getElementById('reportGeneralMemo');
+  let saveTimer = null;
+  if (textarea) {
+    textarea.addEventListener('input', () => {
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(() => {
+        generalMemo = textarea.value;
+        saveGeneralMemo();
+      }, 500);
+    });
+  }
+
+  // コピーボタン
+  const copyBtn = document.getElementById('reportCopyBtn');
+  if (copyBtn) {
+    copyBtn.addEventListener('click', () => {
+      // コピー前に全体メモを確定
+      if (textarea) {
+        generalMemo = textarea.value;
+        saveGeneralMemo();
+      }
+      const text = buildReportText();
+      navigator.clipboard.writeText(text).then(() => {
+        copyBtn.textContent = 'コピーしました！LINEに貼り付けてください';
+        copyBtn.classList.add('copied');
+        setTimeout(() => {
+          copyBtn.textContent = '作業報告をコピー';
+          copyBtn.classList.remove('copied');
+        }, 3000);
+      });
+    });
+  }
+}
+
+function copyCaption(btn) {
+  const c = data.compositions[currentIndex];
+  navigator.clipboard.writeText(c.caption).then(() => {
+    btn.textContent = 'コピーしました';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'キャプションをコピー';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+// ===== 達成演出 =====
+let goalShownFor = new Set(); // 同じ店舗で何度も出さないように
+
+function showGoal(storeName, allStoresDone) {
+  // 同一セッションで同じ店舗は1回だけ
+  const goalKey = storeName + (allStoresDone ? '_ALL' : '');
+  if (goalShownFor.has(goalKey)) return;
+  goalShownFor.add(goalKey);
+
+  const overlay = document.getElementById('goalOverlay');
+  const icon = document.getElementById('goalIcon');
+  const title = document.getElementById('goalTitle');
+  const sub = document.getElementById('goalSub');
+  const store = document.getElementById('goalStore');
+
+  if (allStoresDone) {
+    icon.textContent = '\uD83C\uDF89';
+    title.textContent = '\u5168\u5E97\u8217\u64AE\u5F71\u5B8C\u4E86\uFF01';
+    sub.textContent = '\u304A\u75B2\u308C\u3055\u307E\u3067\u3057\u305F\uFF01\u5168\u30AB\u30C3\u30C8\u64AE\u5F71\u3067\u304D\u307E\u3057\u305F';
+    store.textContent = '\u2728 PERFECT \u2728';
+  } else {
+    icon.textContent = '\uD83C\uDF1F';
+    title.textContent = '\u64AE\u5F71\u5B8C\u4E86\uFF01';
+    sub.textContent = '\u3053\u306E\u5E97\u8217\u306E\u30AB\u30C3\u30C8\u3092\u3059\u3079\u3066\u64AE\u5F71\u3057\u307E\u3057\u305F';
+    store.textContent = storeName;
+  }
+
+  // 紙吹雪を生成
+  launchConfetti(allStoresDone ? 80 : 40);
+
+  // バイブレーション（対応端末のみ）
+  if (navigator.vibrate) {
+    navigator.vibrate(allStoresDone ? [100, 50, 100, 50, 200] : [100, 50, 100]);
+  }
+
+  overlay.classList.add('show');
+}
+
+document.getElementById('goalDismiss').addEventListener('click', () => {
+  document.getElementById('goalOverlay').classList.remove('show');
+  // 紙吹雪を片付け
+  document.getElementById('confettiContainer').innerHTML = '';
+});
+
+function launchConfetti(count) {
+  const container = document.getElementById('confettiContainer');
+  container.innerHTML = '';
+  const colors = ['#4a6cf7', '#2ecc71', '#f0a030', '#e74c3c', '#9b59b6', '#1abc9c', '#f1c40f', '#ff6b9d'];
+  const shapes = ['square', 'circle'];
+
+  for (let i = 0; i < count; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti';
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    const shape = shapes[Math.floor(Math.random() * shapes.length)];
+    const size = 6 + Math.random() * 8;
+    const left = Math.random() * 100;
+    const delay = Math.random() * 1.5;
+    const duration = 2 + Math.random() * 2;
+
+    el.style.left = left + '%';
+    el.style.width = size + 'px';
+    el.style.height = size + 'px';
+    el.style.background = color;
+    el.style.borderRadius = shape === 'circle' ? '50%' : '2px';
+    el.style.animationDelay = delay + 's';
+    el.style.animationDuration = duration + 's';
+
+    container.appendChild(el);
+  }
+}
+
+// ===== Aboutパネル =====
+document.getElementById('aboutBtn').addEventListener('click', () => {
+  const panel = document.getElementById('aboutPanel');
+  const backdrop = document.getElementById('aboutBackdrop');
+  document.getElementById('aboutContent').innerHTML = getAboutContent();
+  requestAnimationFrame(() => {
+    backdrop.classList.add('show');
+    panel.classList.add('show');
+  });
+});
+document.getElementById('aboutBackdrop').addEventListener('click', () => {
+  document.getElementById('aboutPanel').classList.remove('show');
+  document.getElementById('aboutBackdrop').classList.remove('show');
+});
+
+function getAboutContent() {
+  return ''
+    + '<h2>Storyboard について</h2>'
+    + '<p>ショート動画の撮影現場で使う構成ビューアーアプリです。スマホのブラウザで開いて、構成JSONを読み込むだけで使えます。</p>'
+    + '<h3>できること</h3>'
+    + '<ul>'
+    + '<li>構成カードを見ながら撮影を進める</li>'
+    + '<li>カットごとにチェック（時刻付き）で進捗管理</li>'
+    + '<li>カットごと・全体にメモを残す</li>'
+    + '<li>作業報告をワンタップでコピーしてLINEで送る</li>'
+    + '<li>キャプション（投稿文）をコピーできる</li>'
+    + '</ul>'
+
+    + '<h2>データの取り扱い</h2>'
+    + '<div class="highlight">'
+    + '<strong>すべてのデータはこのスマホの中だけにあります</strong><br>'
+    + 'サーバーを使っていない完全ローカルのアプリです。インターネットには一切接続しません。'
+    + '</div>'
+    + '<h3>ポイント</h3>'
+    + '<ul>'
+    + '<li>構成データ（JSON）はブラウザに読み込まれるだけで、どこにも送信されません</li>'
+    + '<li>チェック・メモはブラウザの「localStorage」に保存されます（このスマホのこのブラウザだけ）</li>'
+    + '<li>データは自分でコピー&送信しないかぎり、どこにも共有されません</li>'
+    + '<li>Wi-Fiが切れていても動きます</li>'
+    + '</ul>'
+
+    + '<h3>データが消えるケース</h3>'
+    + '<ul>'
+    + '<li>ブラウザの「履歴」や「Webサイトデータ」を削除した場合</li>'
+    + '<li>シークレットモード（プライベートブラウズ）で開いた場合</li>'
+    + '<li>別のブラウザで開いた場合（SafariのデータはChromeでは見えません）</li>'
+    + '<li>スマホを初期化した場合</li>'
+    + '</ul>'
+    + '<p>大事なメモは撮影後に<strong>作業報告</strong>としてコピー・送信しておくのがおすすめです。</p>'
+
+    + '<h2>使い方</h2>'
+    + '<ul>'
+    + '<li>JSONファイルを読み込む</li>'
+    + '<li>店舗タブを切り替えて撮影を進める</li>'
+    + '<li>撮影したカットにチェックを入れる</li>'
+    + '<li>気づきがあればメモに記入</li>'
+    + '<li>全部終わったら「作業報告」ボタンからコピーしてLINEで送る</li>'
+    + '</ul>';
+}
+
+// 初期表示：履歴を表示
+renderHistory();
+</script>
+</body>
+</html>
